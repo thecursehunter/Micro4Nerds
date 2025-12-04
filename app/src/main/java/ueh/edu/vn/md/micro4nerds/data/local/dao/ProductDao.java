@@ -1,4 +1,4 @@
-package ueh.edu.vn.md.micro4nerds.data.local;
+package ueh.edu.vn.md.micro4nerds.data.local.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,7 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
-import ueh.edu.vn.md.micro4nerds.model.Product;
+
+import ueh.edu.vn.md.micro4nerds.data.local.SQLiteHelper;
+import ueh.edu.vn.md.micro4nerds.data.model.Product;
 
 public class ProductDao {
     private final SQLiteHelper dbHelper;

@@ -1,6 +1,6 @@
 package ueh.edu.vn.md.micro4nerds.data.remote;
 
-import ueh.edu.vn.md.micro4nerds.model.Product;
+import ueh.edu.vn.md.micro4nerds.data.model.Product;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
