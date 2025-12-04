@@ -1,4 +1,4 @@
-package ueh.edu.vn.md.micro4nerds.model;
+package ueh.edu.vn.md.micro4nerds.data.model;
 
 import java.io.Serializable;
 
