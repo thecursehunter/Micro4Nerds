@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:layout_margin="20dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="35dp"
+    app:cardElevation="10dp">
+    <!-- cardCornerRadius = một nửa chiều cao (70dp/2 = 35dp) để tạo hình viên thuốc tròn trịa -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:weightSum="4">
+
+        <!-- 1. Nút Home -->
+        <ImageView
+            android:id="@+id/btnHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            android:padding="22dp"
+            android:src="@drawable/ic_home"
+            app:tint="@android:color/black"
+            android:contentDescription="Home" />
+        <!-- Note: Nếu chưa có ic_home, cậu đổi tạm thành @android:drawable/ic_menu_view -->
+
+        <!-- 2. Nút Search -->
+        <ImageView
+            android:id="@+id/btnSearch"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            android:padding="22dp"
+            android:src="@drawable/ic_search"
+            app:tint="@android:color/black"
+            android:contentDescription="Search" />
+
+        <!-- 3. Nút Yêu thích (Heart) -->
+        <ImageView
+            android:id="@+id/btnHeart"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            android:padding="22dp"
+            android:src="@drawable/ic_heart"
+            app:tint="@android:color/black"
+            android:contentDescription="Favorite" />
+
+        <!-- 4. Nút Giỏ hàng (Có Badge số lượng) -->
+        <!-- Dùng ConstraintLayout để xếp chồng con số lên trên icon -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/btnCart"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <!-- Icon Giỏ hàng -->
+            <ImageView
+                android:id="@+id/imgCart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerInside"
+                android:padding="22dp"
+                android:src="@drawable/ic_cart"
+                app:tint="@android:color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Badge số lượng (Hình tròn đen) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvBadge"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                app:cardBackgroundColor="@android:color/black"
+                app:cardCornerRadius="9dp"
+                app:cardElevation="2dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="18dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+                <!-- Chỉnh margin để di chuyển vị trí chấm đen cho khớp icon -->
+
+                <TextView
+                    android:id="@+id/tvCartCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="0"
+                    android:textColor="@android:color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
