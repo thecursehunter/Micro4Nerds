@@ -8,7 +8,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "Micro4Nerds.db";
     private static final int DB_VERSION = 1;
 
-    // Để public static để bên DAO gọi được tên bảng
+    // Bảng products_cache
     public static final String TABLE_PRODUCTS = "products_cache";
     public static final String COL_ID = "id";
     public static final String COL_NAME = "name";
@@ -16,6 +16,15 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String COL_IMAGE = "imageUrl";
     public static final String COL_DESC = "description";
     public static final String COL_STOCK = "stock";
+
+    // Bảng cart
+    public static final String TABLE_CART = "cart";
+    public static final String COL_CART_ID = "id";
+    public static final String COL_CART_PRODUCT_ID = "productId";
+    public static final String COL_CART_NAME = "name";
+    public static final String COL_CART_PRICE = "price";
+    public static final String COL_CART_IMAGE_URL = "imageUrl";
+    public static final String COL_CART_QUANTITY = "quantity";
 
     public SQLiteHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -31,11 +40,21 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 COL_DESC + " TEXT, " +
                 COL_STOCK + " INTEGER)";
         db.execSQL(createProductTable);
+
+        String createCartTable = "CREATE TABLE " + TABLE_CART + " (" +
+                COL_CART_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_CART_PRODUCT_ID + " TEXT, " +
+                COL_CART_NAME + " TEXT, " +
+                COL_CART_PRICE + " REAL, " +
+                COL_CART_IMAGE_URL + " TEXT, " +
+                COL_CART_QUANTITY + " INTEGER)";
+        db.execSQL(createCartTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CART);
         onCreate(db);
     }
 }
