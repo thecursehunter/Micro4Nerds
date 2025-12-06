@@ -14,15 +14,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Micro4Nerds">
+
+        <!-- Màn hình khởi động cũ -->
         <activity
             android:name=".MainActivity"
+            android:exported="false" />
+
+        <!-- Màn hình giỏ hàng - Đặt làm màn hình khởi động tạm thời -->
+        <activity
+            android:name=".ui.user.CartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Khai báo các màn hình khác -->
+        <activity android:name=".ui.user.CheckoutActivity" />
+
     </application>
 
 </manifest>

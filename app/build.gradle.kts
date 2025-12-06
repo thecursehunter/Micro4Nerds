@@ -51,4 +51,8 @@ dependencies {
     implementation ("com.google.firebase:firebase-firestore")
     implementation ("com.google.firebase:firebase-storage") // Để lưu ảnh upload từ Admin
     implementation ("com.google.android.gms:play-services-auth:21.0.0") // Cho Google Sign-In
+
+    // Thư viện Glide để tải ảnh
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 }
