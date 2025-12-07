@@ -7,7 +7,7 @@
     app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="35dp"
     app:cardElevation="10dp">
-    <!-- cardCornerRadius = một nửa chiều cao (70dp/2 = 35dp) để tạo hình viên thuốc tròn trịa -->
+    <!-- cardCornerRadius = một nửa chiều cao (70dp/2 = 35dp) để tạo hình viên thuốc -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +27,6 @@
             android:src="@drawable/ic_home"
             app:tint="@android:color/black"
             android:contentDescription="Home" />
-        <!-- Note: Nếu chưa có ic_home, cậu đổi tạm thành @android:drawable/ic_menu_view -->
 
         <!-- 2. Nút Search -->
         <ImageView
