@@ -1,4 +1,6 @@
 package ueh.edu.vn.md.micro4nerds.ui.user;
 
-public class ProfileActivity {
+import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
+
+public class ProfileActivity extends BaseActivity {
 }

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="#dcdcdc">
+    <!-- cardBackgroundColor: Màu xám rất nhạt giống Figma -->
+    <!-- cardCornerRadius=0dp: Style sang trọng thường vuông vức, ít bo tròn -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp">
+
+        <!-- 1. ICON TRÁI TIM (Góc trên phải) -->
+        <!-- Để cho đẹp như cậu nói -->
+        <ImageView
+            android:id="@+id/imgHeart"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_heart_1"
+            app:tint="@android:color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 2. ẢNH SẢN PHẨM (Chính giữa) -->
+        <ImageView
+            android:id="@+id/imgProduct"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/banner_3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgHeart" />
+        <!-- src tạm để preview, scaleType centerCrop hoặc fitCenter tùy ảnh thật -->
+
+        <!-- 3. TÊN SẢN PHẨM -->
+        <TextView
+            android:id="@+id/tvProductName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="serif"
+            android:gravity="center"
+            android:text="Sony A6000"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgProduct" />
+
+        <!-- 4. NÚT MUA NGAY (Text + Gạch chân) -->
+        <!-- QUAN TRỌNG: android:clickable="true" và focusable="true"
+             để nó nhận sự kiện click riêng, không bị lẫn với click vào cả ô -->
+        <TextView
+            android:id="@+id/tvBuyNow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="sans-serif-medium"
+            android:padding="4dp"
+            android:text="MUA NGAY"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:letterSpacing="0.1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvProductName" />
+
+        <!-- Đường gạch chân (Style dày dặn giống Figma) -->
+        <View
+            android:id="@+id/lineUnderline"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@android:color/black"
+            app:layout_constraintTop_toBottomOf="@id/tvBuyNow"
+            app:layout_constraintStart_toStartOf="@id/tvBuyNow"
+            app:layout_constraintEnd_toEndOf="@id/tvBuyNow"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

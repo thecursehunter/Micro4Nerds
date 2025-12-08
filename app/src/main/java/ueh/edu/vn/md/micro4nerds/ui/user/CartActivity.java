@@ -1,4 +1,6 @@
 package ueh.edu.vn.md.micro4nerds.ui.user;
 
-public class CartActivity {
+import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
+
+public class CartActivity extends BaseActivity {
 }

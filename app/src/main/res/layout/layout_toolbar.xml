@@ -14,7 +14,7 @@
         android:id="@+id/btnMenu"
         android:layout_width="28dp"
         android:layout_height="28dp"
-        android:src="@android:drawable/ic_menu"
+        android:src="@drawable/ic_menu"
         app:tint="@android:color/black"
         android:contentDescription="Menu"
         app:layout_constraintBottom_toBottomOf="parent"
