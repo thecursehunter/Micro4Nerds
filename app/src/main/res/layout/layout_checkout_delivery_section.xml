@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Section Header -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvDeliveryTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="Phương thức vận chuyển"
+            android:textColor="@color/dark_gray"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <!-- Section Content Card -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp">
+
+        <RadioGroup
+            android:id="@+id/rgDeliveryMethod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <RadioButton
+                android:id="@+id/rbExpress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hỏa tốc (trong ngày) - 100.000đ" />
+
+            <RadioButton
+                android:id="@+id/rbFast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nhanh (2-3 ngày) - 50.000đ" />
+
+            <RadioButton
+                android:id="@+id/rbStandard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiêu chuẩn - 25.000đ"
+                android:checked="true"/>
+        </RadioGroup>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
