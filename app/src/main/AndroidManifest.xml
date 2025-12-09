@@ -35,7 +35,7 @@
 
 
         <!-- Khai báo các màn hình khác -->
-        <activity android:name=".ui.user.CheckoutActivity" />
+        <activity android:name=".ui.user.CheckoutActivity"
         android:exported="false" />
 
 
