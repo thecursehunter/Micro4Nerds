@@ -32,6 +32,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -51,6 +54,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-firestore")
     implementation ("com.google.firebase:firebase-storage") // Để lưu ảnh upload từ Admin
     implementation ("com.google.android.gms:play-services-auth:21.0.0") // Cho Google Sign-In
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
 
     // Thư viện Glide, thư viện load ảnh mạnh nhất hiện nay cho Android
     implementation("com.github.bumptech.glide:glide:4.16.0")

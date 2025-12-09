@@ -48,7 +48,7 @@ public class BaseActivity extends AppCompatActivity {
             // Click Avatar -> Sang trang cá nhân (Profile)
             if (cvAvatar != null) {
                 cvAvatar.setOnClickListener(v -> {
-                    if (!(this instanceof ProfileActivity)) { // Nếu đang ở Profile rồi thì thôi
+                    if (!ProfileActivity.class.isInstance(this)) { // Nếu đang ở Profile rồi thì thôi
                         startActivity(new Intent(this, ProfileActivity.class));
                     }
                 });
