@@ -73,6 +73,7 @@ public class CartActivity extends BaseActivity implements CartAdapter.CartItemLi
                 return;
             }
             Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
+            // Gửi tổng tiền sang CheckoutActivity
             intent.putExtra(CheckoutActivity.EXTRA_ORDER_AMOUNT, currentTotalPrice);
             startActivity(intent);
         });

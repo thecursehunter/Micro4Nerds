@@ -9,7 +9,6 @@ import java.util.List;
 
 import ueh.edu.vn.md.micro4nerds.data.local.SQLiteHelper;
 import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
-import ueh.edu.vn.md.micro4nerds.data.model.Product;
 
 public class CartDao {
     private final SQLiteHelper dbHelper;
@@ -47,7 +46,6 @@ public class CartDao {
                 String imageUrl = "";
                 if (imgIndex != -1) imageUrl = cursor.getString(imgIndex);
 
-                // SỬA LỖI: Đúng thứ tự: productId, productName, productPrice, imageUrl, quantity
                 list.add(new CartItem(productId, name, price, imageUrl, quantity));
             } while (cursor.moveToNext());
             cursor.close();
@@ -56,39 +54,56 @@ public class CartDao {
         return list;
     }
 
-    public void addToCart(Product product) {
+    public void addToCart(CartItem item) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // 1. Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
         Cursor cursor = db.query(SQLiteHelper.TABLE_CART,
                 new String[]{SQLiteHelper.COL_CART_QUANTITY},
                 SQLiteHelper.COL_CART_PRODUCT_ID + " = ?",
-                new String[]{product.getId()},
+                new String[]{item.getProductId()},
                 null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
-            // 2a. Nếu có, cập nhật số lượng
             int currentQuantityIndex = cursor.getColumnIndex(SQLiteHelper.COL_CART_QUANTITY);
             int currentQuantity = 0;
-            if(currentQuantityIndex != -1) currentQuantity = cursor.getInt(currentQuantityIndex);
+            if (currentQuantityIndex != -1) currentQuantity = cursor.getInt(currentQuantityIndex);
 
             ContentValues updateValues = new ContentValues();
-            updateValues.put(SQLiteHelper.COL_CART_QUANTITY, currentQuantity + 1);
+            updateValues.put(SQLiteHelper.COL_CART_QUANTITY, currentQuantity + item.getQuantity());
 
-            db.update(SQLiteHelper.TABLE_CART, updateValues, SQLiteHelper.COL_CART_PRODUCT_ID + " = ?", new String[]{product.getId()});
+            db.update(SQLiteHelper.TABLE_CART, updateValues, SQLiteHelper.COL_CART_PRODUCT_ID + " = ?", new String[]{item.getProductId()});
             cursor.close();
         } else {
-            // 2b. Nếu không, thêm mới
             ContentValues insertValues = new ContentValues();
-            insertValues.put(SQLiteHelper.COL_CART_PRODUCT_ID, product.getId());
-            insertValues.put(SQLiteHelper.COL_CART_NAME, product.getName());
-            insertValues.put(SQLiteHelper.COL_CART_PRICE, product.getPrice());
-            insertValues.put(SQLiteHelper.COL_CART_IMAGE_URL, product.getImageUrl());
-            insertValues.put(SQLiteHelper.COL_CART_QUANTITY, 1);
+            insertValues.put(SQLiteHelper.COL_CART_PRODUCT_ID, item.getProductId());
+            insertValues.put(SQLiteHelper.COL_CART_NAME, item.getProductName());
+            insertValues.put(SQLiteHelper.COL_CART_PRICE, item.getProductPrice());
+            insertValues.put(SQLiteHelper.COL_CART_IMAGE_URL, item.getImageUrl());
+            insertValues.put(SQLiteHelper.COL_CART_QUANTITY, item.getQuantity());
 
             db.insert(SQLiteHelper.TABLE_CART, null, insertValues);
         }
 
+        db.close();
+    }
+
+    public void updateQuantity(String productId, int newQuantity) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(SQLiteHelper.COL_CART_QUANTITY, newQuantity);
+        db.update(SQLiteHelper.TABLE_CART, values, SQLiteHelper.COL_CART_PRODUCT_ID + " = ?", new String[]{productId});
+        db.close();
+    }
+
+    public void removeFromCart(String productId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(SQLiteHelper.TABLE_CART, SQLiteHelper.COL_CART_PRODUCT_ID + " = ?", new String[]{productId});
+        db.close();
+    }
+
+    public void clearCart() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(SQLiteHelper.TABLE_CART, null, null);
         db.close();
     }
 }

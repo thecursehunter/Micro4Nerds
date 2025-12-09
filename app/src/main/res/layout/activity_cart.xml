@@ -25,7 +25,7 @@
         android:id="@+id/tvMyCartTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="My cart"
+        android:text="Giỏ hàng"
         android:textColor="@android:color/black"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -43,7 +43,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:backgroundTint="@android:color/black"
-        android:text="Check out"
+        android:text="Thanh toán"
         android:textAllCaps="false"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginBottom="16dp"
-        android:text="Total:"
+        android:text="Tổng cộng:"
         android:textColor="@color/dark_gray"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/btnCheckout"
@@ -74,7 +74,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/tvTotalLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tvTotalLabel"
-        tools:text="$ 95.00" />
+        tools:text="95.000đ" />
 
     <!-- Cart Items List -->
     <androidx.recyclerview.widget.RecyclerView

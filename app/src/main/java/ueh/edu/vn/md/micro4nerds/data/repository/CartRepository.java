@@ -21,6 +21,7 @@ public class CartRepository {
     }
 
     public void addToCart(Product product) {
-        cartDao.addToCart(product);
+        CartItem item = new CartItem(product.getId(), product.getName(), product.getPrice(), product.getImageUrl(), 1);
+        cartDao.addToCart(item);
     }
 }
