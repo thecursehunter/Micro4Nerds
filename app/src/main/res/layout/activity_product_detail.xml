@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="280dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/banner_1"
+                android:src="@drawable/banner_3"
                 android:background="@android:color/white" />
 
             <!-- B. THÔNG TIN (Padding 2 bên cho thoáng) -->

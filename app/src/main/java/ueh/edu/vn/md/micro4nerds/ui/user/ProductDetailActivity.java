@@ -70,8 +70,7 @@ public class ProductDetailActivity extends BaseActivity {
         // 2. Giá (FormatUtils của Minh)
         tvPrice.setText(FormatUtils.formatCurrency(product.getPrice()));
 
-        // 3. Stock
-        // XỬ LÝ LOGIC STOCK
+        // 3. Stock (XỬ LÝ LOGIC STOCK)
         if (product.getStock() <= 0) {
             // Trường hợp HẾT HÀNG
             tvStock.setText("Tạm hết hàng");
