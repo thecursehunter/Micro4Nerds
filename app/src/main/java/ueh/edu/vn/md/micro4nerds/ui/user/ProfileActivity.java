@@ -7,8 +7,9 @@ import ueh.edu.vn.md.micro4nerds.databinding.ActivityProfileBinding;
 import ueh.edu.vn.md.micro4nerds.data.repository.AuthRepository;
 import com.google.firebase.auth.FirebaseUser;
 import ueh.edu.vn.md.micro4nerds.ui.auth.LoginActivity;
+import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends BaseActivity {
 
     private ActivityProfileBinding binding;
     private AuthRepository authRepository;
