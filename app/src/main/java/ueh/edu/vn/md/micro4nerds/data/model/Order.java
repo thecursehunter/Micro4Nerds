@@ -1,25 +1,22 @@
 package ueh.edu.vn.md.micro4nerds.data.model;
 
+import com.google.firebase.firestore.ServerTimestamp;
+import java.util.Date;
 import java.util.List;
 
 public class Order {
-    private String orderId;
     private String userId;
-    private String userEmail;
-    private String address;
-    private String phone;
+    private List<CartItem> items;
     private double totalPrice;
-    private long createdAt; // Lưu timestamp
-    private List<CartItem> products; // Firebase tự convert List này sang JSON
+    private Date timestamp;
 
-    public Order() { }
+    // Firestore cần một constructor rỗng
+    public Order() {}
 
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public Order(String userId, List<CartItem> items, double totalPrice) {
+        this.userId = userId;
+        this.items = items;
+        this.totalPrice = totalPrice;
     }
 
     public String getUserId() {
@@ -30,28 +27,12 @@ public class Order {
         this.userId = userId;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public List<CartItem> getItems() {
+        return items;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setItems(List<CartItem> items) {
+        this.items = items;
     }
 
     public double getTotalPrice() {
@@ -62,19 +43,12 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
-    public long getCreatedAt() {
-        return createdAt;
+    @ServerTimestamp // Annotation này của Firestore sẽ tự động điền ngày giờ phía server
+    public Date getTimestamp() {
+        return timestamp;
     }
 
-    public void setCreatedAt(long createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public List<CartItem> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<CartItem> products) {
-        this.products = products;
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }
