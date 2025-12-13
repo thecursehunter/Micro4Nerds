@@ -1,18 +1,16 @@
 plugins {
     alias(libs.plugins.android.application)
-    id ("com.google.gms.google-services") // Kích hoạt plugin
+    id("com.google.gms.google-services") // Kích hoạt plugin
 }
 
 android {
     namespace = "ueh.edu.vn.md.micro4nerds"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "ueh.edu.vn.md.micro4nerds"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -29,8 +27,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding = true
@@ -46,15 +44,15 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     // Import Firebase BoM (Chỉ cần chỉnh version ở dòng này)
-    implementation (platform("com.google.firebase:firebase-bom:34.6.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
 
     // Các thư viện con (KHÔNG cần ghi số version nữa -> Tự động đồng bộ)
-    implementation ("com.google.firebase:firebase-analytics")
-    implementation ("com.google.firebase:firebase-auth")
-    implementation ("com.google.firebase:firebase-firestore")
-    implementation ("com.google.firebase:firebase-storage") // Để lưu ảnh upload từ Admin
-    implementation ("com.google.android.gms:play-services-auth:21.0.0") // Cho Google Sign-In
-    implementation ("de.hdodenhof:circleimageview:3.1.0")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage") // Để lưu ảnh upload từ Admin
+    implementation("com.google.android.gms:play-services-auth:21.0.0") // Cho Google Sign-In
+    implementation("de.hdodenhof:circleimageview:3.1.0")
 
     // Thư viện Glide, thư viện load ảnh mạnh nhất hiện nay cho Android
     implementation("com.github.bumptech.glide:glide:4.16.0")
