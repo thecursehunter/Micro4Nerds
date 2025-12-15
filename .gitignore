@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Ignore the entire .idea directory to prevent user-specific settings from being committed.
+/.idea/
