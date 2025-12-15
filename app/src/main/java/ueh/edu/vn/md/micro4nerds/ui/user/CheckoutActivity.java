@@ -13,9 +13,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +34,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private OrderViewModel orderViewModel;
 
-    private double deliveryFee = 25000; 
+    private double deliveryFee = 25000;
     private List<CartItem> itemsToCheckout;
     private double orderAmountToCheckout;
 
@@ -110,7 +107,18 @@ public class CheckoutActivity extends AppCompatActivity {
                 return;
             }
 
-            orderViewModel.checkout(itemsToCheckout, orderAmountToCheckout);
+            int selectedShippingId = rgDeliveryMethod.getCheckedRadioButtonId();
+            String shippingMethod;
+            if (selectedShippingId != -1) {
+                RadioButton selectedRadioButton = findViewById(selectedShippingId);
+                shippingMethod = selectedRadioButton.getText().toString();
+            } else {
+                Toast.makeText(this, "Vui lòng chọn phương thức vận chuyển", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Gọi phương thức checkout đã được cập nhật với đầy đủ thông tin
+            orderViewModel.checkout(itemsToCheckout, orderAmountToCheckout, fullName, address, shippingMethod);
         });
     }
 
@@ -129,9 +137,7 @@ public class CheckoutActivity extends AppCompatActivity {
                     finish();
                     break;
                 case ERROR:
-                    // ĐÃ SỬA: Lấy tin nhắn từ Exception và hiển thị nó
-                    // Ở đây nó sẽ hiển thị tin nhắn debug của chúng ta
-                    String errorMessage = orderViewModel.getLastError(); // Giả sử có hàm này
+                    String errorMessage = orderViewModel.getLastError(); 
                     handleCheckoutError(errorMessage);
                     break;
                 case IDLE:
@@ -154,11 +160,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private void handleCheckoutError(String message) {
         progressBar.setVisibility(View.GONE);
         btnSubmitOrder.setEnabled(true);
-        // Hiển thị tin nhắn lỗi (sẽ là tin nhắn debug của chúng ta)
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show(); 
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         orderViewModel.resetCheckoutState();
     }
 }
-
-
-// Cần thêm hàm getLastError() vào OrderViewModel.java

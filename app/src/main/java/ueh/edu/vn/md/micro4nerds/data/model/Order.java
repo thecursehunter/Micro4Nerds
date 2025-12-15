@@ -6,49 +6,45 @@ import java.util.List;
 
 public class Order {
     private String userId;
-    private List<CartItem> items;
+    private String customerName; // Thêm tên khách hàng
+    private List<CartItem> info;
     private double totalPrice;
+    private String address;
+    private String shippingMethod;
     private Date timestamp;
 
-    // Firestore cần một constructor rỗng
     public Order() {}
 
-    public Order(String userId, List<CartItem> items, double totalPrice) {
+    // Cập nhật Constructor để bao gồm customerName
+    public Order(String userId, String customerName, List<CartItem> info, double totalPrice, String address, String shippingMethod) {
         this.userId = userId;
-        this.items = items;
+        this.customerName = customerName;
+        this.info = info;
         this.totalPrice = totalPrice;
+        this.address = address;
+        this.shippingMethod = shippingMethod;
     }
 
-    public String getUserId() {
-        return userId;
-    }
+    // Getters và Setters cho tất cả các trường
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
 
-    public List<CartItem> getItems() {
-        return items;
-    }
+    public List<CartItem> getInfo() { return info; }
+    public void setInfo(List<CartItem> info) { this.info = info; }
 
-    public void setItems(List<CartItem> items) {
-        this.items = items;
-    }
+    public double getTotalPrice() { return totalPrice; }
+    public void setTotalPrice(double totalPrice) { this.totalPrice = totalPrice; }
 
-    public double getTotalPrice() {
-        return totalPrice;
-    }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
 
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
+    public String getShippingMethod() { return shippingMethod; }
+    public void setShippingMethod(String shippingMethod) { this.shippingMethod = shippingMethod; }
 
-    @ServerTimestamp // Annotation này của Firestore sẽ tự động điền ngày giờ phía server
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
+    @ServerTimestamp
+    public Date getTimestamp() { return timestamp; }
+    public void setTimestamp(Date timestamp) { this.timestamp = timestamp; }
 }

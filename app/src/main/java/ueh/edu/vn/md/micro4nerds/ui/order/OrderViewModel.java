@@ -19,7 +19,7 @@ public class OrderViewModel extends AndroidViewModel {
 
     private final OrderRepository orderRepository;
     private final MutableLiveData<CheckoutState> checkoutState = new MutableLiveData<>();
-    private String lastError = null; // Biến lưu lỗi cuối cùng
+    private String lastError = null; 
 
     public enum CheckoutState {
         IDLE,
@@ -38,30 +38,29 @@ public class OrderViewModel extends AndroidViewModel {
         return checkoutState;
     }
 
-    // --- HÀM MỚI ĐỂ LẤY LỖI ---
     public String getLastError() {
         return lastError;
     }
 
-    public void checkout(List<CartItem> items, double totalPrice) {
+    // Sửa đổi phương thức checkout
+    public void checkout(List<CartItem> items, double totalPrice, String customerName, String address, String shippingMethod) {
         String userId = FirebaseAuth.getInstance().getUid();
-        // Vì đang giả lập, chúng ta có thể bỏ qua userId
-        // if (userId == null) { ... }
-
+        
         checkoutState.setValue(CheckoutState.LOADING);
 
-        Order order = new Order(userId, items, totalPrice);
+        // Tạo đối tượng Order với đầy đủ thông tin
+        Order order = new Order(userId, customerName, items, totalPrice, address, shippingMethod);
 
         orderRepository.createOrder(order, new OrderRemoteDataSource.OrderCallback() {
             @Override
             public void onSuccess() {
-                lastError = null; // Xóa lỗi cũ
+                lastError = null; 
                 checkoutState.postValue(CheckoutState.SUCCESS);
             }
 
             @Override
             public void onFailure(Exception e) {
-                lastError = e.getMessage(); // Lưu lại tin nhắn lỗi
+                lastError = e.getMessage();
                 checkoutState.postValue(CheckoutState.ERROR);
             }
         });

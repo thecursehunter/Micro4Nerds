@@ -1,7 +1,7 @@
 package ueh.edu.vn.md.micro4nerds.ui.cart;
 
 import android.app.Application;
-import android.util.Log; // Thêm import Log
+import android.util.Log; 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -18,13 +18,13 @@ import ueh.edu.vn.md.micro4nerds.data.repository.CartRepository;
 import ueh.edu.vn.md.micro4nerds.data.repository.OrderRepository;
 
 public class CartViewModel extends AndroidViewModel {
-    private static final String TAG = "CHECKOUT_DEBUG"; // Tag để lọc log
+    private static final String TAG = "CHECKOUT_DEBUG"; 
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
     private final MutableLiveData<List<CartItem>> cartItemsLiveData = new MutableLiveData<>();
     private final MutableLiveData<Double> totalPriceLiveData = new MutableLiveData<>();
 
-    // LiveData để theo dõi trạng thái đặt hàng
+    
     private final MutableLiveData<OrderPlacementState> orderPlacementState = new MutableLiveData<>();
 
     public enum OrderPlacementState {
@@ -90,7 +90,8 @@ public class CartViewModel extends AndroidViewModel {
     }
 
     // --- PHẦN XỬ LÝ ĐẶT HÀNG ---
-    public void placeOrder() {
+    // Sửa đổi phương thức để chấp nhận đầy đủ tham số
+    public void placeOrder(String customerName, String address, String shippingMethod) {
         Log.d(TAG, "CartViewModel: Hàm placeOrder() được gọi.");
         String userId = FirebaseAuth.getInstance().getUid();
         List<CartItem> currentItems = cartItemsLiveData.getValue();
@@ -104,7 +105,8 @@ public class CartViewModel extends AndroidViewModel {
 
         orderPlacementState.setValue(OrderPlacementState.LOADING);
 
-        Order order = new Order(userId, currentItems, currentTotal);
+        // Sửa lỗi: Sử dụng constructor mới của Order với đầy đủ tham số
+        Order order = new Order(userId, customerName, currentItems, currentTotal, address, shippingMethod);
 
         orderRepository.createOrder(order, new OrderRemoteDataSource.OrderCallback() {
             @Override

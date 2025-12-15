@@ -22,17 +22,14 @@ public class OrderRemoteDataSource {
     }
 
     public void createOrder(Order order, OrderCallback callback) {
-        // --- Code Firebase gốc ---
+        // --- BẬT LẠI TÍNH NĂNG KIỂM TRA ĐĂNG NHẬP ---
         FirebaseUser currentUser = auth.getCurrentUser();
-        
-        // Vì bạn chưa có hệ thống đăng nhập, currentUser sẽ là null
-        // và sẽ luôn đi vào nhánh onFailure, gây ra lỗi "Đặt hàng thất bại".
-        // Đây là hành vi đúng theo thiết kế bảo mật.
         if (currentUser == null) {
             callback.onFailure(new Exception("User not logged in."));
             return;
         }
 
+        // Sử dụng ID của người dùng đã đăng nhập
         order.setUserId(currentUser.getUid());
 
         // Thêm đơn hàng vào collection "orders" trong Firestore

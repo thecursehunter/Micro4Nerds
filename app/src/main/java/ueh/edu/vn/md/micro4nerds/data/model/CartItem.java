@@ -1,5 +1,7 @@
 package ueh.edu.vn.md.micro4nerds.data.model;
 
+import com.google.firebase.firestore.Exclude;
+
 public class CartItem {
     private String productId;
     private String productName;
@@ -25,6 +27,8 @@ public class CartItem {
     public void setProductName(String productName) { this.productName = productName; }
     public double getProductPrice() { return productPrice; }
     public void setProductPrice(double productPrice) { this.productPrice = productPrice; }
+    
+    @Exclude // Báo cho Firestore bỏ qua trường này khi lưu
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public int getQuantity() { return quantity; }
