@@ -32,13 +32,14 @@
         <activity
             android:name=".ui.auth.LoginActivity"
             android:exported="false" />
-        <activity android:name=".ui.user.ProductDetailActivity" />
+        <activity
+            android:name=".ui.user.ProductDetailActivity" />
 
+        <activity
+            android:name=".ui.user.SearchActivity" />
 
-        <!-- Khai báo các màn hình khác -->
         <activity android:name=".ui.user.CheckoutActivity"
         android:exported="false" />
-
 
 
     </application>

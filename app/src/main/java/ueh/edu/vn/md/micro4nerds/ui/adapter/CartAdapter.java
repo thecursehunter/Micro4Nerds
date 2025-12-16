@@ -84,6 +84,27 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         return cartItems.size();
     }
 
+    // --- PHƯƠNG THỨC ĐƯỢC THÊM VÀO ---
+
+    /**
+     * Cập nhật danh sách sản phẩm và thông báo cho Adapter.
+     */
+    public void updateItems(List<CartItem> newItems) {
+        cartItems.clear();
+        cartItems.addAll(newItems);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Lấy một sản phẩm tại một vị trí cụ thể.
+     */
+    public CartItem getItem(int position) {
+        if (position >= 0 && position < cartItems.size()) {
+            return cartItems.get(position);
+        }
+        return null;
+    }
+
     public static class CartViewHolder extends RecyclerView.ViewHolder {
         ImageView imgProduct, btnDelete, btnIncrease, btnDecrease;
         TextView tvProductName, tvProductPrice, tvQuantity;

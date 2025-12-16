@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log; // Thêm import Log
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import ueh.edu.vn.md.micro4nerds.data.local.SQLiteHelper;
 import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
 
 public class CartDao {
+    private static final String TAG = "CHECKOUT_DEBUG"; // Tag để lọc log
     private final SQLiteHelper dbHelper;
 
     public CartDao(Context context) {
@@ -102,8 +104,14 @@ public class CartDao {
     }
 
     public void clearCart() {
+        Log.d(TAG, "CartDao: Hàm clearCart() được gọi.");
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.delete(SQLiteHelper.TABLE_CART, null, null);
+        try {
+            int deletedRows = db.delete(SQLiteHelper.TABLE_CART, null, null);
+            Log.d(TAG, "CartDao: Đã xóa " + deletedRows + " dòng khỏi giỏ hàng.");
+        } catch (Exception e) {
+            Log.e(TAG, "CartDao: Lỗi khi xóa giỏ hàng", e);
+        }
         db.close();
     }
 }
