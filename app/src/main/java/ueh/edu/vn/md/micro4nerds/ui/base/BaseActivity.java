@@ -15,6 +15,7 @@ import ueh.edu.vn.md.micro4nerds.R;
 import ueh.edu.vn.md.micro4nerds.ui.user.CartActivity;
 import ueh.edu.vn.md.micro4nerds.ui.user.HomeActivity;
 import ueh.edu.vn.md.micro4nerds.ui.user.ProfileActivity;
+import ueh.edu.vn.md.micro4nerds.ui.user.SearchActivity;
 
 public class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,7 +83,9 @@ public class BaseActivity extends AppCompatActivity {
             }
 
             if (btnSearch != null) {
-                btnSearch.setOnClickListener(v -> Toast.makeText(this, "Search Clicked", Toast.LENGTH_SHORT).show());
+                btnSearch.setOnClickListener(v -> {
+                    startActivity(new Intent(this, SearchActivity.class));
+                });
             }
             if (btnHeart != null) {
                 btnHeart.setOnClickListener(v -> Toast.makeText(this, "Wishlist Clicked", Toast.LENGTH_SHORT).show());

@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "Micro4Nerds.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2; // Đã tăng phiên bản DB
 
     // Bảng products_cache
     public static final String TABLE_PRODUCTS = "products_cache";
