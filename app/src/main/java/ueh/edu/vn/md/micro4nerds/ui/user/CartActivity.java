@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.lifecycle.ViewModelProvider; // Thêm import
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,10 +17,10 @@ import java.util.List;
 import java.util.Locale;
 
 import ueh.edu.vn.md.micro4nerds.R;
-import ueh.edu.vn.md.micro4nerds.data.local.dao.CartDao;
 import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
 import ueh.edu.vn.md.micro4nerds.ui.adapter.CartAdapter;
 import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
+import ueh.edu.vn.md.micro4nerds.ui.cart.CartViewModel; // Thêm import
 
 public class CartActivity extends BaseActivity implements CartAdapter.CartItemListener {
 
@@ -28,92 +29,94 @@ public class CartActivity extends BaseActivity implements CartAdapter.CartItemLi
     private Button btnCheckout;
     private ImageView btnBack;
     private CartAdapter cartAdapter;
-    private List<CartItem> cartItems;
-    private CartDao cartDao;
-    private double currentTotalPrice = 0;
+
+    // --- Sử dụng ViewModel ---
+    private CartViewModel cartViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        cartDao = new CartDao(this);
+        // --- Khởi tạo ViewModel ---
+        cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
 
-        rvCartItems = findViewById(R.id.rvCartItems);
-        tvTotalPrice = findViewById(R.id.tvTotalPrice);
-        btnCheckout = findViewById(R.id.btnCheckout);
-        btnBack = findViewById(R.id.btnBack);
-
+        initViews();
         setupRecyclerView();
         setupClickListeners();
+        observeViewModel();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadCartItems();
+        // ViewModel sẽ tự động quản lý việc tải lại dữ liệu khi cần
+        cartViewModel.loadCartItems();
+    }
+
+    private void initViews() {
+        rvCartItems = findViewById(R.id.rvCartItems);
+        tvTotalPrice = findViewById(R.id.tvTotalPrice);
+        btnCheckout = findViewById(R.id.btnCheckout);
+        btnBack = findViewById(R.id.btnBack);
     }
 
     private void setupRecyclerView() {
         rvCartItems.setLayoutManager(new LinearLayoutManager(this));
-        cartItems = new ArrayList<>();
-        cartAdapter = new CartAdapter(this, cartItems, this);
+        // Adapter sẽ được khởi tạo với danh sách rỗng, ViewModel sẽ cập nhật sau
+        cartAdapter = new CartAdapter(this, new ArrayList<>(), this);
         rvCartItems.setAdapter(cartAdapter);
+    }
+
+    private void observeViewModel() {
+        // Lắng nghe thay đổi danh sách giỏ hàng
+        cartViewModel.getCartItems().observe(this, cartItems -> {
+            if (cartItems != null) {
+                cartAdapter.updateItems(cartItems);
+            }
+        });
+
+        // Lắng nghe thay đổi tổng tiền
+        cartViewModel.getTotalPrice().observe(this, totalPrice -> {
+            if (totalPrice != null) {
+                NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+                tvTotalPrice.setText(currencyFormatter.format(totalPrice));
+            }
+        });
     }
 
     private void setupClickListeners() {
         btnBack.setOnClickListener(v -> {
-            startActivity(new Intent(CartActivity.this, HomeActivity.class));
-            finish();
+            // Cân nhắc sử dụng onBackPressed() thay vì tạo Intent mới
+            onBackPressed();
         });
 
         btnCheckout.setOnClickListener(v -> {
-            if (cartItems.isEmpty()) {
+            if (cartAdapter.getItemCount() == 0) {
                 Toast.makeText(this, "Giỏ hàng của bạn đang trống", Toast.LENGTH_SHORT).show();
                 return;
             }
+            // ĐÃ SỬA: Không cần gửi tổng tiền nữa
+            // CheckoutActivity sẽ tự lấy dữ liệu từ ViewModel
             Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
-            // Gửi tổng tiền sang CheckoutActivity
-            intent.putExtra(CheckoutActivity.EXTRA_ORDER_AMOUNT, currentTotalPrice);
             startActivity(intent);
         });
     }
 
-    private void loadCartItems() {
-        cartItems.clear();
-        cartItems.addAll(cartDao.getCartItems());
-        cartAdapter.notifyDataSetChanged();
-        updateTotalPrice();
-    }
-
-    private void updateTotalPrice() {
-        currentTotalPrice = 0;
-        for (CartItem item : cartItems) {
-            currentTotalPrice += item.getProductPrice() * item.getQuantity();
-        }
-        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        tvTotalPrice.setText(currencyFormatter.format(currentTotalPrice));
-    }
-
     @Override
     public void onQuantityChange(int position, int newQuantity) {
-        if (newQuantity > 0) {
-            CartItem item = cartItems.get(position);
-            item.setQuantity(newQuantity);
-            cartDao.updateQuantity(item.getProductId(), newQuantity);
-            cartAdapter.notifyItemChanged(position);
-            updateTotalPrice();
+        CartItem item = cartAdapter.getItem(position);
+        if (item != null) {
+            cartViewModel.updateQuantity(item.getProductId(), newQuantity);
         }
     }
 
     @Override
     public void onItemRemove(int position) {
-        CartItem item = cartItems.get(position);
-        cartDao.removeFromCart(item.getProductId());
-        cartItems.remove(position);
-        cartAdapter.notifyItemRemoved(position);
-        cartAdapter.notifyItemRangeChanged(position, cartItems.size());
-        updateTotalPrice();
-        Toast.makeText(this, "Đã xóa sản phẩm", Toast.LENGTH_SHORT).show();
+        CartItem item = cartAdapter.getItem(position);
+        if (item != null) {
+            cartViewModel.removeFromCart(item.getProductId());
+            Toast.makeText(this, "Đã xóa sản phẩm", Toast.LENGTH_SHORT).show();
+        }
     }
 }
