@@ -35,7 +35,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home); // Layout cậu vừa chốt
+        setContentView(R.layout.activity_home);
 
         // Ánh xạ View
         initViews();
@@ -62,7 +62,6 @@ public class HomeActivity extends BaseActivity {
         listBanners.add(R.drawable.banner_1);
         listBanners.add(R.drawable.banner_2);
         listBanners.add(R.drawable.banner_3);
-        // Nếu cậu có nhiều ảnh hơn thì cứ add thêm vào đây
 
         // 2. Gán Adapter
         bannerAdapter = new BannerAdapter(listBanners);
@@ -93,7 +92,6 @@ public class HomeActivity extends BaseActivity {
                 int currentItem = viewPagerBanner.getCurrentItem();
                 int totalItem = viewPagerBanner.getAdapter().getItemCount();
 
-                // Nếu chưa đến cuối thì next, đến cuối rồi thì quay về 0
                 if (currentItem < totalItem - 1) {
                     viewPagerBanner.setCurrentItem(currentItem + 1);
                 } else {
@@ -105,28 +103,22 @@ public class HomeActivity extends BaseActivity {
 
     // --- PHẦN 2: LOGIC SẢN PHẨM ---
     private void setupProductList() {
-        // 1. Cấu hình RecyclerView dạng Lưới (Grid) 2 cột
-        // NestedScrollingEnabled = false đã set trong XML rồi nên ko cần set lại code
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         rvProducts.setLayoutManager(gridLayoutManager);
 
-        // 2. Khởi tạo Adapter và xử lý 2 sự kiện Click
         productAdapter = new ProductAdapter(this, new ProductAdapter.ProductClickListener() {
             @Override
             public void onProductClick(Product product) {
-                // Logic: Click vào ảnh -> Sang trang Chi Tiết (Detail)
                 Intent intent = new Intent(HomeActivity.this, ProductDetailActivity.class);
-                intent.putExtra("product_item", product); // Gửi object sang
+                intent.putExtra("product_item", product);
                 startActivity(intent);
             }
 
             @Override
             public void onBuyNowClick(Product product) {
-                // Logic: Click "Mua Ngay" -> Sang trang Checkout luôn
                 Intent intent = new Intent(HomeActivity.this, CheckoutActivity.class);
-                // Chúng ta gửi sản phẩm này sang Checkout để tính tiền luôn
                 intent.putExtra("product_item", product);
-                intent.putExtra("is_buy_now", true); // Cờ đánh dấu là mua ngay (ko qua giỏ)
+                intent.putExtra("is_buy_now", true);
                 startActivity(intent);
             }
         });
@@ -135,38 +127,26 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void observeData() {
-        // Kết nối ViewModel
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
-
-        // Lắng nghe dữ liệu
-        // Giả sử hàm trong ViewModel tên là getProducts() hoặc getProductList()
-        // Cậu check file ProductViewModel của bạn A để gọi cho đúng tên hàm nhé
         productViewModel.getProductList().observe(this, products -> {
             if (products != null && !products.isEmpty()) {
-                // Khi có dữ liệu từ Firebase về -> Đổ vào Adapter
                 productAdapter.setProductList(products);
             } else {
-                // Có thể hiển thị thông báo "Không có sản phẩm nào" hoặc Loading
+                // Handle empty list
             }
         });
-
-        // Gọi hàm load dữ liệu (nếu ViewModel không tự load trong constructor)
-        // productViewModel.fetchProducts();
     }
 
     // --- PHẦN 3: LIFECYCLE (Quản lý pin) ---
     @Override
     protected void onPause() {
         super.onPause();
-        // Khi thoát app hoặc tắt màn hình -> Dừng slide banner
         sliderHandler.removeCallbacks(sliderRunnable);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Khi quay lại app -> Tiếp tục chạy slide
         sliderHandler.postDelayed(sliderRunnable, 3000);
     }
 }
-

@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Create Account"
-            android:textColor="?attr/colorOnSurface"
+            android:textColor="@android:color/black"
             android:textSize="28sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -47,14 +47,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Create a new account to get started"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textColor="@android:color/darker_gray"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvRegister" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilEmailReg"
+            android:id="@+id/tilNameReg"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -63,7 +63,25 @@
             android:layout_marginEnd="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvRegisterSubtitle">
+            app:layout_constraintTop_toBottomOf="@id/tvRegisterSubtitle">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtNameReg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Full Name"
+                android:inputType="textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilEmailReg"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="@id/tilNameReg"
+            app:layout_constraintStart_toStartOf="@id/tilNameReg"
+            app:layout_constraintTop_toBottomOf="@id/tilNameReg">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtEmailReg"
@@ -79,9 +97,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="@+id/tilEmailReg"
-            app:layout_constraintStart_toStartOf="@+id/tilEmailReg"
-            app:layout_constraintTop_toBottomOf="@+id/tilEmailReg"
+            app:layout_constraintEnd_toEndOf="@id/tilEmailReg"
+            app:layout_constraintStart_toStartOf="@id/tilEmailReg"
+            app:layout_constraintTop_toBottomOf="@id/tilEmailReg"
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -100,7 +118,7 @@
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="@+id/tilPasswordReg"
             app:layout_constraintStart_toStartOf="@+id/tilPasswordReg"
-            app:layout_constraintTop_toBottomOf="@+id/tilPasswordReg"
+            app:layout_constraintTop_toBottomOf="@id/tilPasswordReg"
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -123,7 +141,6 @@
             app:layout_constraintStart_toStartOf="@+id/tilConfirmPasswordReg"
             app:layout_constraintTop_toBottomOf="@+id/tilConfirmPasswordReg" />
 
-
         <LinearLayout
             android:id="@+id/llGoToLogin"
             android:layout_width="wrap_content"
@@ -133,13 +150,13 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnRegister">
+            app:layout_constraintTop_toBottomOf="@id/btnRegister">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Already have an account? "
-                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textColor="@android:color/darker_gray"
                 android:textSize="14sp" />
 
             <TextView
@@ -147,7 +164,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Login"
-                android:textColor="?attr/colorPrimary"
+                android:textColor="@android:color/holo_blue_dark"
                 android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>

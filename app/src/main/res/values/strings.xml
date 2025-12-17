@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Micro4Nerds</string>
+    <string name="default_web_client_id" translatable="false">190844466278-7vmi1jleca8rjofdhmsqugt16f4kr2sc.apps.googleusercontent.com</string>
 </resources>
