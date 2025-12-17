@@ -21,8 +21,8 @@ import java.util.Locale;
 import ueh.edu.vn.md.micro4nerds.R;
 import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
 import ueh.edu.vn.md.micro4nerds.data.model.Product;
-import ueh.edu.vn.md.micro4nerds.ui.cart.CartViewModel;
-import ueh.edu.vn.md.micro4nerds.ui.order.OrderViewModel;
+import ueh.edu.vn.md.micro4nerds.ui.viewmodel.CartViewModel;
+import ueh.edu.vn.md.micro4nerds.ui.viewmodel.OrderViewModel;
 
 public class CheckoutActivity extends AppCompatActivity {
 
