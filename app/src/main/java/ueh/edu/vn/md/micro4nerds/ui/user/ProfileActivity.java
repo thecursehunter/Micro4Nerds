@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.lifecycle.ViewModelProvider;
+
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -13,11 +15,14 @@ import ueh.edu.vn.md.micro4nerds.data.repository.AuthRepository;
 import ueh.edu.vn.md.micro4nerds.databinding.ActivityProfileBinding;
 import ueh.edu.vn.md.micro4nerds.ui.auth.LoginActivity;
 import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
+import ueh.edu.vn.md.micro4nerds.ui.viewmodel.CartViewModel;
+import ueh.edu.vn.md.micro4nerds.utils.ViewUtils;
 
 public class ProfileActivity extends BaseActivity {
 
     private ActivityProfileBinding binding;
     private AuthRepository authRepository;
+    private CartViewModel cartViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +33,7 @@ public class ProfileActivity extends BaseActivity {
         authRepository = new AuthRepository();
         loadUserProfile();
         setupMenuListeners();
+        observeViewModel();
 
         binding.btnLogout.setOnClickListener(v -> {
             authRepository.logout();
@@ -66,6 +72,13 @@ public class ProfileActivity extends BaseActivity {
         binding.tvSettings.setOnClickListener(v -> {
             // TODO: Implement settings functionality
             Toast.makeText(this, "Settings clicked", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void observeViewModel() {
+        cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
+        cartViewModel.getCartItems().observe(this, cartItems -> {
+            ViewUtils.updateCartBadge(binding.bottomNav.cvBadge, binding.bottomNav.tvCartCount, cartItems);
         });
     }
 }

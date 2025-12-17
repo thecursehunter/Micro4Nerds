@@ -46,13 +46,6 @@ public class CartActivity extends BaseActivity implements CartAdapter.CartItemLi
         observeViewModel();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // ViewModel sẽ tự động quản lý việc tải lại dữ liệu khi cần
-        cartViewModel.loadCartItems();
-    }
-
     private void initViews() {
         rvCartItems = findViewById(R.id.rvCartItems);
         tvTotalPrice = findViewById(R.id.tvTotalPrice);
