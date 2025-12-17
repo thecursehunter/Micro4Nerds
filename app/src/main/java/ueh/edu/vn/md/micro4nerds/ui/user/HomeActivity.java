@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,16 +20,21 @@ import ueh.edu.vn.md.micro4nerds.data.model.Product;
 import ueh.edu.vn.md.micro4nerds.ui.adapter.BannerAdapter;
 import ueh.edu.vn.md.micro4nerds.ui.adapter.ProductAdapter;
 import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
+import ueh.edu.vn.md.micro4nerds.ui.viewmodel.CartViewModel;
 import ueh.edu.vn.md.micro4nerds.ui.viewmodel.ProductViewModel;
+import ueh.edu.vn.md.micro4nerds.utils.ViewUtils;
 
 public class HomeActivity extends BaseActivity {
     // Khai báo biến
     private ViewPager2 viewPagerBanner;
     private RecyclerView rvProducts;
+    private CardView cvBadge;
+    private TextView tvCartCount;
 
     private BannerAdapter bannerAdapter;
     private ProductAdapter productAdapter;
     private ProductViewModel productViewModel;
+    private CartViewModel cartViewModel;
 
     // Handler để chạy auto slide cho banner
     private Handler sliderHandler = new Handler(Looper.getMainLooper());
@@ -53,6 +60,8 @@ public class HomeActivity extends BaseActivity {
     private void initViews() {
         viewPagerBanner = findViewById(R.id.viewPagerBanner);
         rvProducts = findViewById(R.id.rvProducts);
+        cvBadge = findViewById(R.id.cvBadge);
+        tvCartCount = findViewById(R.id.tvCartCount);
     }
 
     // --- PHẦN 1: LOGIC BANNER ---
@@ -137,6 +146,7 @@ public class HomeActivity extends BaseActivity {
     private void observeData() {
         // Kết nối ViewModel
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+        cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
 
         // Lắng nghe dữ liệu
         // Giả sử hàm trong ViewModel tên là getProducts() hoặc getProductList()
@@ -148,6 +158,10 @@ public class HomeActivity extends BaseActivity {
             } else {
                 // Có thể hiển thị thông báo "Không có sản phẩm nào" hoặc Loading
             }
+        });
+
+        cartViewModel.getCartItems().observe(this, cartItems -> {
+            ViewUtils.updateCartBadge(cvBadge, tvCartCount, cartItems);
         });
 
         // Gọi hàm load dữ liệu (nếu ViewModel không tự load trong constructor)
@@ -169,4 +183,3 @@ public class HomeActivity extends BaseActivity {
         sliderHandler.postDelayed(sliderRunnable, 3000);
     }
 }
-

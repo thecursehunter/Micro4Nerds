@@ -156,13 +156,30 @@
             android:paddingEnd="16dp">
 
             <!-- Shipping Address -->
-            <include layout="@layout/layout_checkout_shipping_address_section" />
+            <include layout="@layout/layout_checkout_shipping_address_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <!-- Payment -->
-            <include layout="@layout/layout_checkout_payment_section" android:layout_marginTop="16dp" />
+            <include layout="@layout/layout_checkout_payment_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
 
             <!-- Delivery Method -->
-            <include layout="@layout/layout_checkout_delivery_section" android:layout_marginTop="16dp"/>
+            <include layout="@layout/layout_checkout_delivery_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"/>
+            
+            <!-- Order Items -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCheckoutItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_checkout_product" />
 
         </LinearLayout>
 
