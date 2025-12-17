@@ -13,14 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import ueh.edu.vn.md.micro4nerds.R;
 import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
 import ueh.edu.vn.md.micro4nerds.ui.adapter.CartAdapter;
 import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
-import ueh.edu.vn.md.micro4nerds.ui.cart.CartViewModel; // Thêm import
+import ueh.edu.vn.md.micro4nerds.ui.viewmodel.CartViewModel; // Thêm import
 
 public class CartActivity extends BaseActivity implements CartAdapter.CartItemListener {
 
