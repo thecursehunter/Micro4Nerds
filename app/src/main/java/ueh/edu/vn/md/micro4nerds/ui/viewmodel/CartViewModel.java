@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
 import ueh.edu.vn.md.micro4nerds.data.model.Order;
-import ueh.edu.vn.md.micro4nerds.data.model.Product;
 import ueh.edu.vn.md.micro4nerds.data.remote.OrderRemoteDataSource;
 import ueh.edu.vn.md.micro4nerds.data.repository.CartRepository;
 import ueh.edu.vn.md.micro4nerds.data.repository.OrderRepository;
@@ -38,7 +37,7 @@ public class CartViewModel extends AndroidViewModel {
 
     public CartViewModel(@NonNull Application application) {
         super(application);
-        cartRepository = CartRepository.getInstance(application);
+        cartRepository = new CartRepository(application);
         orderRepository = new OrderRepository(application);
 
         cartItemsLiveData = cartRepository.getCartItems();
@@ -71,10 +70,6 @@ public class CartViewModel extends AndroidViewModel {
 
     public void removeFromCart(String productId) {
         cartRepository.removeFromCart(productId);
-    }
-
-    public void addToCart(Product product) {
-        cartRepository.addToCart(product);
     }
 
     public void updateQuantity(String productId, int newQuantity) {

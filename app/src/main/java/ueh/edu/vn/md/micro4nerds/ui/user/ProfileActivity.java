@@ -21,7 +21,6 @@ import ueh.edu.vn.md.micro4nerds.utils.ViewUtils;
 public class ProfileActivity extends BaseActivity {
 
     private ActivityProfileBinding binding;
-    private AuthRepository authRepository;
     private CartViewModel cartViewModel;
     private SharedPrefManager sharedPrefManager;
     private FirebaseAuth firebaseAuth;
