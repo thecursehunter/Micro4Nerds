@@ -11,15 +11,25 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.bumptech.glide.Glide;
+
 import ueh.edu.vn.md.micro4nerds.R;
+import ueh.edu.vn.md.micro4nerds.data.local.SharedPrefManager;
+import ueh.edu.vn.md.micro4nerds.data.model.User;
+import ueh.edu.vn.md.micro4nerds.ui.auth.LoginActivity;
+import ueh.edu.vn.md.micro4nerds.ui.user.ProfileActivity;
 import ueh.edu.vn.md.micro4nerds.ui.user.CartActivity;
 import ueh.edu.vn.md.micro4nerds.ui.user.HomeActivity;
-import ueh.edu.vn.md.micro4nerds.ui.user.ProfileActivity;
 import ueh.edu.vn.md.micro4nerds.ui.user.SearchActivity;
 
 public class BaseActivity extends AppCompatActivity {
+
+    private SharedPrefManager sharedPrefManager;
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPrefManager = new SharedPrefManager(this);
     }
 
     @Override
@@ -34,62 +44,104 @@ public class BaseActivity extends AppCompatActivity {
         setupCommonUI();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateToolbarAvatar();
+        // updateCartCount(CartManager.getInstance().getCartCount());
+    }
+
     private void setupCommonUI() {
         View toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
-            ImageView btnMenu = toolbar.findViewById(R.id.btnMenu);
-            CardView cvAvatar = toolbar.findViewById(R.id.cvAvatar);
-
-            if (btnMenu != null) {
-                btnMenu.setOnClickListener(v -> {
-                    Toast.makeText(this, "Menu Clicked", Toast.LENGTH_SHORT).show();
-                });
-            }
-
-            if (cvAvatar != null) {
-                cvAvatar.setOnClickListener(v -> {
-                    if (!ProfileActivity.class.isInstance(this)) {
-                        startActivity(new Intent(this, ProfileActivity.class));
-                    }
-                });
-            }
+            setupToolbar(toolbar);
         }
 
         View bottomNav = findViewById(R.id.bottomNav);
         if (bottomNav != null) {
-            ImageView btnHome = bottomNav.findViewById(R.id.btnHome);
-            ImageView btnSearch = bottomNav.findViewById(R.id.btnSearch);
-            ImageView btnHeart = bottomNav.findViewById(R.id.btnHeart);
-            View btnCartContainer = bottomNav.findViewById(R.id.btnCart);
+            setupBottomNavigation(bottomNav);
+        }
+    }
 
-            if (btnHome != null) {
-                btnHome.setOnClickListener(v -> {
-                    if (!(this instanceof HomeActivity)) {
-                        Intent intent = new Intent(this, HomeActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
-                        overridePendingTransition(0, 0);
+    private void setupToolbar(View toolbar) {
+        ImageView btnMenu = toolbar.findViewById(R.id.btnMenu);
+        CardView cvAvatar = toolbar.findViewById(R.id.cvAvatar);
+
+        if (btnMenu != null) {
+            btnMenu.setOnClickListener(v -> Toast.makeText(this, "Menu Clicked", Toast.LENGTH_SHORT).show());
+        }
+
+        // Logic click vào avatar đã đúng: chưa đăng nhập -> Login, đã đăng nhập -> Profile
+        if (cvAvatar != null) {
+            cvAvatar.setOnClickListener(v -> {
+                if (sharedPrefManager.isLoggedIn()) {
+                    if (!(this instanceof ProfileActivity)) {
+                        startActivity(new Intent(this, ProfileActivity.class));
                     }
-                });
-            }
-
-            if (btnCartContainer != null) {
-                btnCartContainer.setOnClickListener(v -> {
-                    if (!(this instanceof CartActivity)) {
-                        startActivity(new Intent(this, CartActivity.class));
-                        overridePendingTransition(0, 0);
+                } else {
+                    if (!(this instanceof LoginActivity)) {
+                        startActivity(new Intent(this, LoginActivity.class));
                     }
-                });
-            }
+                }
+            });
+        }
+    }
 
-            if (btnSearch != null) {
-                btnSearch.setOnClickListener(v -> {
-                    startActivity(new Intent(this, SearchActivity.class));
-                });
+    private void setupBottomNavigation(View bottomNav) {
+        ImageView btnHome = bottomNav.findViewById(R.id.btnHome);
+        ImageView btnSearch = bottomNav.findViewById(R.id.btnSearch);
+        ImageView btnHeart = bottomNav.findViewById(R.id.btnHeart);
+        View btnCartContainer = bottomNav.findViewById(R.id.btnCart);
+
+        if (btnHome != null) {
+            btnHome.setOnClickListener(v -> {
+                if (!(this instanceof HomeActivity)) {
+                    Intent intent = new Intent(this, HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
+                }
+            });
+        }
+
+        if (btnCartContainer != null) {
+            btnCartContainer.setOnClickListener(v -> {
+                if (!(this instanceof CartActivity)) {
+                    startActivity(new Intent(this, CartActivity.class));
+                    overridePendingTransition(0, 0);
+                }
+            });
+        }
+
+        if (btnSearch != null) {
+            btnSearch.setOnClickListener(v -> startActivity(new Intent(this, SearchActivity.class)));
+        }
+
+        if (btnHeart != null) {
+            btnHeart.setOnClickListener(v -> Toast.makeText(this, "Wishlist Clicked", Toast.LENGTH_SHORT).show());
+        }
+    }
+
+    private void updateToolbarAvatar() {
+        ImageView imgAvatar = findViewById(R.id.imgAvatar);
+        if (imgAvatar == null) return;
+
+        if (sharedPrefManager.isLoggedIn()) {
+            User user = sharedPrefManager.getUser();
+            // Đã đăng nhập, tải avatar thật
+            if (user != null && user.getAvatar() != null && !user.getAvatar().isEmpty()) {
+                Glide.with(this)
+                        .load(user.getAvatar())
+                        .placeholder(R.drawable.ic_default_avatar) // Ảnh chờ
+                        .error(R.drawable.ic_default_avatar)       // Ảnh lỗi
+                        .into(imgAvatar);
+            } else {
+                // Đăng nhập nhưng không có avatar, hiện ảnh mặc định
+                imgAvatar.setImageResource(R.drawable.ic_default_avatar);
             }
-            if (btnHeart != null) {
-                btnHeart.setOnClickListener(v -> Toast.makeText(this, "Wishlist Clicked", Toast.LENGTH_SHORT).show());
-            }
+        } else {
+            // Chưa đăng nhập, hiện ảnh mặc định
+            imgAvatar.setImageResource(R.drawable.ic_default_avatar);
         }
     }
 

@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 
 import ueh.edu.vn.md.micro4nerds.R;
 import ueh.edu.vn.md.micro4nerds.data.model.Product;
+import ueh.edu.vn.md.micro4nerds.data.repository.CartRepository; // Thêm import
 import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
 import ueh.edu.vn.md.micro4nerds.ui.viewmodel.CartViewModel;
 import ueh.edu.vn.md.micro4nerds.utils.FormatUtils;
@@ -33,6 +34,7 @@ public class ProductDetailActivity extends BaseActivity {
     private TextView tvCartCount;
 
     private Product product;
+    private CartRepository cartRepository; // Thêm CartRepository
     private CartViewModel cartViewModel;
 
     @Override
@@ -40,7 +42,8 @@ public class ProductDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
 
-        cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
+        // Khởi tạo repository
+        cartRepository = new CartRepository(this);
 
         initViews();
         getIntentData();
@@ -117,7 +120,10 @@ public class ProductDetailActivity extends BaseActivity {
         // Nút THÊM GIỎ HÀNG -> Lưu vào SQLite
         btnAddToCart.setOnClickListener(v -> {
             if (product != null) {
-                cartViewModel.addToCart(product);
+                // Gọi repository để thêm sản phẩm vào giỏ hàng
+                cartRepository.addToCart(product);
+
+                // Hiển thị thông báo cho người dùng
                 Toast.makeText(this, "Đã thêm '" + product.getName() + "' vào giỏ hàng!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Không thể thêm sản phẩm này vào giỏ hàng.", Toast.LENGTH_SHORT).show();
