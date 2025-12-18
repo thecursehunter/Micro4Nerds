@@ -14,15 +14,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Micro4Nerds">
+
+        <!-- Màn hình chính, điểm khởi đầu của ứng dụng -->
         <activity
             android:name=".ui.user.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Các màn hình xác thực -->
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.auth.RegisterActivity"
+            android:exported="false" />
+
+        <!-- Các màn hình chức năng người dùng -->
         <activity
             android:name=".ui.user.ProfileActivity"
             android:exported="false" />
@@ -30,17 +41,14 @@
             android:name=".ui.user.CartActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.auth.LoginActivity"
+            android:name=".ui.user.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.user.ProductDetailActivity" />
-
+            android:name=".ui.user.ProductDetailActivity"
+            android:exported="false" />
         <activity
-            android:name=".ui.user.SearchActivity" />
-
-        <activity android:name=".ui.user.CheckoutActivity"
-        android:exported="false" />
-
+            android:name=".ui.user.CheckoutActivity"
+            android:exported="false" />
 
     </application>
 
