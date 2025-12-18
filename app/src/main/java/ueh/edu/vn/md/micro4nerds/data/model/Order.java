@@ -6,7 +6,8 @@ import java.util.List;
 
 public class Order {
     private String userId;
-    private String customerName; // Thêm tên khách hàng
+    private String customerName;
+    private String phoneNumber; // Thêm số điện thoại
     private List<CartItem> info;
     private double totalPrice;
     private String address;
@@ -15,22 +16,24 @@ public class Order {
 
     public Order() {}
 
-    // Cập nhật Constructor để bao gồm customerName
-    public Order(String userId, String customerName, List<CartItem> info, double totalPrice, String address, String shippingMethod) {
+    public Order(String userId, String customerName, String phoneNumber, List<CartItem> info, double totalPrice, String address, String shippingMethod) {
         this.userId = userId;
         this.customerName = customerName;
+        this.phoneNumber = phoneNumber;
         this.info = info;
         this.totalPrice = totalPrice;
         this.address = address;
         this.shippingMethod = shippingMethod;
     }
 
-    // Getters và Setters cho tất cả các trường
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 
     public String getCustomerName() { return customerName; }
     public void setCustomerName(String customerName) { this.customerName = customerName; }
+
+    public String getPhoneNumber() { return phoneNumber; } // Getter mới
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; } // Setter mới
 
     public List<CartItem> getInfo() { return info; }
     public void setInfo(List<CartItem> info) { this.info = info; }

@@ -5,13 +5,11 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.ArrayList;
 import java.util.List;
 import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
 import ueh.edu.vn.md.micro4nerds.data.model.Order;
@@ -84,7 +82,8 @@ public class CartViewModel extends AndroidViewModel {
         cartRepository.clearCart();
     }
 
-    public void placeOrder(String customerName, String address, String shippingMethod) {
+    // Thêm phoneNumber vào tham số
+    public void placeOrder(String customerName, String phoneNumber, String address, String shippingMethod) {
         Log.d(TAG, "CartViewModel: Hàm placeOrder() được gọi.");
         String userId = FirebaseAuth.getInstance().getUid();
         List<CartItem> currentItems = cartItemsLiveData.getValue();
@@ -98,7 +97,8 @@ public class CartViewModel extends AndroidViewModel {
 
         orderPlacementState.setValue(OrderPlacementState.LOADING);
 
-        Order order = new Order(userId, customerName, currentItems, currentTotal, address, shippingMethod);
+        // Truyền đầy đủ 7 tham số cho constructor của Order
+        Order order = new Order(userId, customerName, phoneNumber, currentItems, currentTotal, address, shippingMethod);
 
         orderRepository.createOrder(order, new OrderRemoteDataSource.OrderCallback() {
             @Override
