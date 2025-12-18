@@ -169,5 +169,10 @@ public class HomeActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         sliderHandler.postDelayed(sliderRunnable, 3000);
+        // Refresh cart counter when returning to HomeActivity
+        // The observer is already set up in observeData(), but we can force a refresh
+        if (cartViewModel != null && cartViewModel.getCartItems().getValue() != null) {
+            ViewUtils.updateCartBadge(cvBadge, tvCartCount, cartViewModel.getCartItems().getValue());
+        }
     }
 }

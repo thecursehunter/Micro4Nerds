@@ -1,5 +1,6 @@
 package ueh.edu.vn.md.micro4nerds.ui.user;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -152,6 +153,10 @@ public class CheckoutActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(this, "Đặt hàng thành công!", Toast.LENGTH_LONG).show();
                     new ViewModelProvider(this).get(CartViewModel.class).clearCart();
+                    // Navigate to HomeActivity instead of going back
+                    Intent intent = new Intent(this, HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                     finish();
                     break;
                 case ERROR:

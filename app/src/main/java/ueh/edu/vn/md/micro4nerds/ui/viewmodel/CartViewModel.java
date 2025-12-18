@@ -35,7 +35,7 @@ public class CartViewModel extends AndroidViewModel {
 
     public CartViewModel(@NonNull Application application) {
         super(application);
-        cartRepository = new CartRepository(application);
+        cartRepository = CartRepository.getInstance(application);
         orderRepository = new OrderRepository(application);
 
         cartItemsLiveData = cartRepository.getCartItems();

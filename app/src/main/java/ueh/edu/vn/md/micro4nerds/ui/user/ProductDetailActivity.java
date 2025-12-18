@@ -15,8 +15,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 
 import ueh.edu.vn.md.micro4nerds.R;
+import ueh.edu.vn.md.micro4nerds.data.local.SharedPrefManager;
 import ueh.edu.vn.md.micro4nerds.data.model.Product;
 import ueh.edu.vn.md.micro4nerds.data.repository.CartRepository; // Thêm import
+import ueh.edu.vn.md.micro4nerds.ui.auth.LoginActivity;
 import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
 import ueh.edu.vn.md.micro4nerds.ui.viewmodel.CartViewModel;
 import ueh.edu.vn.md.micro4nerds.utils.FormatUtils;
@@ -36,14 +38,16 @@ public class ProductDetailActivity extends BaseActivity {
     private Product product;
     private CartRepository cartRepository; // Thêm CartRepository
     private CartViewModel cartViewModel;
+    private SharedPrefManager sharedPrefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
 
-        // Khởi tạo repository
-        cartRepository = new CartRepository(this);
+        // Khởi tạo repository (singleton instance)
+        cartRepository = CartRepository.getInstance(this);
+        sharedPrefManager = new SharedPrefManager(this);
 
         initViews();
         getIntentData();
@@ -109,6 +113,12 @@ public class ProductDetailActivity extends BaseActivity {
 
     private void setupListeners() {
         btnBuyNow.setOnClickListener(v -> {
+            if (!sharedPrefManager.isLoggedIn()) {
+                Toast.makeText(this, "Vui lòng đăng nhập để mua hàng", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, LoginActivity.class));
+                return;
+            }
+            
             if (product != null) {
                 Intent intent = new Intent(ProductDetailActivity.this, CheckoutActivity.class);
                 intent.putExtra("product_item", product);
@@ -119,9 +129,17 @@ public class ProductDetailActivity extends BaseActivity {
 
         // Nút THÊM GIỎ HÀNG -> Lưu vào SQLite
         btnAddToCart.setOnClickListener(v -> {
+            if (!sharedPrefManager.isLoggedIn()) {
+                Toast.makeText(this, "Vui lòng đăng nhập để thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, LoginActivity.class));
+                return;
+            }
+            
             if (product != null) {
                 // Gọi repository để thêm sản phẩm vào giỏ hàng
                 cartRepository.addToCart(product);
+                // Force refresh the cart counter immediately
+                cartRepository.loadCartItems();
 
                 // Hiển thị thông báo cho người dùng
                 Toast.makeText(this, "Đã thêm '" + product.getName() + "' vào giỏ hàng!", Toast.LENGTH_SHORT).show();
