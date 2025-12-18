@@ -12,20 +12,25 @@ import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
 
 public class ViewUtils {
     public static void updateCartBadge(CardView cvBadge, TextView tvCartCount, List<CartItem> cartItems) {
+        if (cvBadge == null || tvCartCount == null) {
+            return;
+        }
+        
+        int totalItems = 0;
         if (cartItems != null && !cartItems.isEmpty()) {
-            int totalItems = 0;
             for (CartItem item : cartItems) {
-                totalItems += item.getQuantity();
+                if (item != null && item.getQuantity() > 0) {
+                    totalItems += item.getQuantity();
+                }
             }
+        }
 
-            if (totalItems > 0) {
-                cvBadge.setVisibility(View.VISIBLE);
-                tvCartCount.setText(String.valueOf(totalItems));
-            } else {
-                cvBadge.setVisibility(View.GONE);
-            }
+        if (totalItems > 0) {
+            cvBadge.setVisibility(View.VISIBLE);
+            tvCartCount.setText(String.valueOf(totalItems));
         } else {
             cvBadge.setVisibility(View.GONE);
+            tvCartCount.setText("0");
         }
     }
 }

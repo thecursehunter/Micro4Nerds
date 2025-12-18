@@ -13,19 +13,27 @@ import ueh.edu.vn.md.micro4nerds.data.model.Product;
 
 public class CartRepository {
 
+    private static CartRepository instance;
     private final CartDao cartDao;
     private final MutableLiveData<List<CartItem>> cartItemsLiveData = new MutableLiveData<>();
 
-    public CartRepository(Context context) {
+    private CartRepository(Context context) {
         this.cartDao = new CartDao(context);
         loadCartItems();
+    }
+
+    public static synchronized CartRepository getInstance(Context context) {
+        if (instance == null) {
+            instance = new CartRepository(context.getApplicationContext());
+        }
+        return instance;
     }
 
     public LiveData<List<CartItem>> getCartItems() {
         return cartItemsLiveData;
     }
 
-    private void loadCartItems() {
+    public void loadCartItems() {
         cartItemsLiveData.postValue(cartDao.getCartItems());
     }
 
