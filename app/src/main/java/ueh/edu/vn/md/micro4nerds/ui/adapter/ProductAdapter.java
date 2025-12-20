@@ -10,9 +10,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import ueh.edu.vn.md.micro4nerds.R;
+import ueh.edu.vn.md.micro4nerds.data.local.SharedPrefManager;
 import ueh.edu.vn.md.micro4nerds.data.model.Product;
+import ueh.edu.vn.md.micro4nerds.ui.auth.LoginActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +26,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private Context context;
     private List<Product> productList;
     private ProductClickListener listener;
+    private SharedPrefManager sharedPrefManager;
 
     // Interface để gửi tín hiệu Click về cho HomeActivity xử lý
     // Chúng ta tách rõ 2 hành động khác nhau
@@ -34,6 +40,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         this.context = context;
         this.listener = listener;
         this.productList = new ArrayList<>();
+        this.sharedPrefManager = new SharedPrefManager(context);
     }
 
     // Hàm cập nhật dữ liệu mới (gọi từ HomeActivity)
@@ -71,6 +78,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         // A. Click vào chữ "MUA NGAY"
         holder.tvBuyNow.setOnClickListener(v -> {
+            if (!sharedPrefManager.isLoggedIn()) {
+                Toast.makeText(context, "Vui lòng đăng nhập để mua hàng", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+                return;
+            }
+            
             if (listener != null) {
                 listener.onBuyNowClick(product);
             }

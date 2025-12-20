@@ -12,7 +12,20 @@
           "package_name": "ueh.edu.vn.md.micro4nerds"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "190844466278-jlo5ib7r9ve8pag5hiq4ba6u7fngs14d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ueh.edu.vn.md.micro4nerds",
+            "certificate_hash": "7512053cb8cb93d1b9d235d9f260df3d906be451"
+          }
+        },
+        {
+          "client_id": "190844466278-7vmi1jleca8rjofdhmsqugt16f4kr2sc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBpnjuFzmk-z5BBnPZiPnz8ptxQiTbE0RQ"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190844466278-7vmi1jleca8rjofdhmsqugt16f4kr2sc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

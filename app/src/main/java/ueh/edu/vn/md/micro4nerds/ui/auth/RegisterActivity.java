@@ -2,17 +2,23 @@ package ueh.edu.vn.md.micro4nerds.ui.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Objects;
+
+import ueh.edu.vn.md.micro4nerds.data.local.SharedPrefManager;
+import ueh.edu.vn.md.micro4nerds.data.model.User;
+import ueh.edu.vn.md.micro4nerds.data.remote.FirebaseAuthDataSource;
 import ueh.edu.vn.md.micro4nerds.databinding.ActivityRegisterBinding;
-import ueh.edu.vn.md.micro4nerds.data.repository.AuthRepository;
-import com.google.firebase.auth.FirebaseUser;
+import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
 import ueh.edu.vn.md.micro4nerds.ui.user.HomeActivity;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends BaseActivity {
 
     private ActivityRegisterBinding binding;
-    private AuthRepository authRepository;
+    private FirebaseAuthDataSource authDataSource;
+    private SharedPrefManager sharedPrefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,40 +26,64 @@ public class RegisterActivity extends AppCompatActivity {
         binding = ActivityRegisterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        authRepository = new AuthRepository();
+        authDataSource = new FirebaseAuthDataSource();
+        sharedPrefManager = new SharedPrefManager(this);
 
-        binding.btnRegister.setOnClickListener(v -> {
-            String email = binding.edtEmailReg.getText().toString().trim();
-            String pass = binding.edtPasswordReg.getText().toString().trim();
-            String confirmPass = binding.edtConfirmPasswordReg.getText().toString().trim();
+        setClickListeners();
+    }
 
-            if (email.isEmpty() || pass.isEmpty() || confirmPass.isEmpty()) {
-                Toast.makeText(RegisterActivity.this, "Vui lòng điền đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (!pass.equals(confirmPass)) {
-                Toast.makeText(RegisterActivity.this, "Mật khẩu không khớp!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            authRepository.register(email, pass, new AuthRepository.AuthCallback() {
-                @Override
-                public void onSuccess(FirebaseUser user) {
-                    Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                    // Đăng ký xong vào thẳng Home
-                    startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
-                    finishAffinity(); // Xóa stack để không back về login
-                }
-
-                @Override
-                public void onFailure(String message) {
-                    Toast.makeText(RegisterActivity.this, "Lỗi: " + message, Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
-
-        // Quay lại Login nếu đã có tài khoản
+    private void setClickListeners() {
+        binding.btnRegister.setOnClickListener(v -> registerUser());
         binding.tvBackToLogin.setOnClickListener(v -> finish());
+    }
+
+    private void registerUser() {
+        String name = Objects.requireNonNull(binding.edtNameReg.getText()).toString().trim();
+        String email = Objects.requireNonNull(binding.edtEmailReg.getText()).toString().trim();
+        String password = Objects.requireNonNull(binding.edtPasswordReg.getText()).toString().trim();
+        String confirmPassword = Objects.requireNonNull(binding.edtConfirmPasswordReg.getText()).toString().trim();
+
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Vui lòng điền đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            Toast.makeText(this, "Mật khẩu không khớp!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        showLoading(true);
+
+        authDataSource.register(email, password, name, new FirebaseAuthDataSource.AuthCallback() {
+            @Override
+            public void onSuccess(User user) {
+                sharedPrefManager.saveUser(user);
+                showLoading(false);
+                Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                navigateToHome();
+            }
+
+            @Override
+            public void onError(String message) {
+                showLoading(false);
+                Toast.makeText(RegisterActivity.this, "Lỗi đăng ký: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showLoading(boolean isLoading) {
+        if (isLoading) {
+            binding.btnRegister.setVisibility(View.INVISIBLE);
+        } else {
+            binding.btnRegister.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void navigateToHome() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

@@ -9,13 +9,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.bumptech.glide.Glide;
 
 import ueh.edu.vn.md.micro4nerds.R;
+import ueh.edu.vn.md.micro4nerds.data.local.SharedPrefManager;
 import ueh.edu.vn.md.micro4nerds.data.model.Product;
 import ueh.edu.vn.md.micro4nerds.data.repository.CartRepository; // Thêm import
+import ueh.edu.vn.md.micro4nerds.ui.auth.LoginActivity;
 import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
+import ueh.edu.vn.md.micro4nerds.ui.viewmodel.CartViewModel;
 import ueh.edu.vn.md.micro4nerds.utils.FormatUtils;
+import ueh.edu.vn.md.micro4nerds.utils.ViewUtils;
 
 public class ProductDetailActivity extends BaseActivity {
     // Khai báo View
@@ -23,23 +30,29 @@ public class ProductDetailActivity extends BaseActivity {
     private TextView tvName, tvStock, tvPrice, tvDesc;
     private Button btnBuyNow, btnAddToCart;
     private ImageView btnHeart;
-    private LinearLayout layoutActions; 
-    private TextView tvOutOfStockMsg;   
+    private LinearLayout layoutActions;
+    private TextView tvOutOfStockMsg;
+    private CardView cvBadge;
+    private TextView tvCartCount;
 
-    private Product product; 
+    private Product product;
     private CartRepository cartRepository; // Thêm CartRepository
+    private CartViewModel cartViewModel;
+    private SharedPrefManager sharedPrefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
 
-        // Khởi tạo repository
-        cartRepository = new CartRepository(this);
+        // Khởi tạo repository (singleton instance)
+        cartRepository = CartRepository.getInstance(this);
+        sharedPrefManager = new SharedPrefManager(this);
 
         initViews();
         getIntentData();
         setupListeners();
+        observeViewModel();
     }
 
     private void initViews() {
@@ -55,6 +68,8 @@ public class ProductDetailActivity extends BaseActivity {
 
         layoutActions = findViewById(R.id.layoutActions);
         tvOutOfStockMsg = findViewById(R.id.tvOutOfStockMsg);
+        cvBadge = findViewById(R.id.cvBadge);
+        tvCartCount = findViewById(R.id.tvCartCount);
     }
 
     private void getIntentData() {
@@ -98,19 +113,33 @@ public class ProductDetailActivity extends BaseActivity {
 
     private void setupListeners() {
         btnBuyNow.setOnClickListener(v -> {
+            if (!sharedPrefManager.isLoggedIn()) {
+                Toast.makeText(this, "Vui lòng đăng nhập để mua hàng", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, LoginActivity.class));
+                return;
+            }
+            
             if (product != null) {
                 Intent intent = new Intent(ProductDetailActivity.this, CheckoutActivity.class);
                 intent.putExtra("product_item", product);
-                intent.putExtra("is_buy_now", true); 
+                intent.putExtra("is_buy_now", true);
                 startActivity(intent);
             }
         });
 
         // Nút THÊM GIỎ HÀNG -> Lưu vào SQLite
         btnAddToCart.setOnClickListener(v -> {
+            if (!sharedPrefManager.isLoggedIn()) {
+                Toast.makeText(this, "Vui lòng đăng nhập để thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, LoginActivity.class));
+                return;
+            }
+            
             if (product != null) {
                 // Gọi repository để thêm sản phẩm vào giỏ hàng
                 cartRepository.addToCart(product);
+                // Force refresh the cart counter immediately
+                cartRepository.loadCartItems();
 
                 // Hiển thị thông báo cho người dùng
                 Toast.makeText(this, "Đã thêm '" + product.getName() + "' vào giỏ hàng!", Toast.LENGTH_SHORT).show();
@@ -121,6 +150,13 @@ public class ProductDetailActivity extends BaseActivity {
 
         btnHeart.setOnClickListener(v -> {
             Toast.makeText(this, "Đã thêm vào yêu thích", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void observeViewModel() {
+        cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
+        cartViewModel.getCartItems().observe(this, cartItems -> {
+            ViewUtils.updateCartBadge(cvBadge, tvCartCount, cartItems);
         });
     }
 }
