@@ -31,7 +31,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private Button btnSubmitOrder;
     private TextView tvOrderAmount, tvDeliveryFee, tvTotalAmount;
-    private EditText etFullName, etAddress;
+    private EditText etFullName, etAddress, etPhoneNumber;
     private RadioGroup rgPaymentMethod, rgDeliveryMethod;
     private ProgressBar progressBar;
     private RecyclerView rvCheckoutItems;
@@ -88,6 +88,7 @@ public class CheckoutActivity extends AppCompatActivity {
         tvTotalAmount = findViewById(R.id.tvTotalAmount);
         etFullName = findViewById(R.id.etFullName);
         etAddress = findViewById(R.id.etAddress);
+        etPhoneNumber = findViewById(R.id.etPhoneNumber); // Ánh xạ số điện thoại
         rgPaymentMethod = findViewById(R.id.rgPaymentMethod);
         rgDeliveryMethod = findViewById(R.id.rgDeliveryMethod);
         progressBar = findViewById(R.id.progressBarCheckout);
@@ -118,9 +119,10 @@ public class CheckoutActivity extends AppCompatActivity {
 
             String fullName = etFullName.getText().toString().trim();
             String address = etAddress.getText().toString().trim();
+            String phoneNumber = etPhoneNumber.getText().toString().trim(); // Lấy số điện thoại
 
-            if (fullName.isEmpty() || address.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập đầy đủ họ tên và địa chỉ", Toast.LENGTH_SHORT).show();
+            if (fullName.isEmpty() || address.isEmpty() || phoneNumber.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập đầy đủ họ tên, địa chỉ và số điện thoại", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -134,7 +136,8 @@ public class CheckoutActivity extends AppCompatActivity {
                 return;
             }
 
-            orderViewModel.checkout(itemsToCheckout, orderAmountToCheckout, fullName, address, shippingMethod);
+            // Gọi checkout với đầy đủ tham số
+            orderViewModel.checkout(itemsToCheckout, orderAmountToCheckout, fullName, phoneNumber, address, shippingMethod);
         });
     }
 
