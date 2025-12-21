@@ -223,21 +223,19 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         TextView tvEmail = headerView.findViewById(R.id.tvNavEmail);
         ImageView imgAvatar = headerView.findViewById(R.id.imgNavAvatar);
 
-        // 1. Khởi tạo theo cách của bạn B
         SharedPrefManager pref = new SharedPrefManager(this);
 
         if (pref.isLoggedIn()) {
             // 2. Lấy nguyên cục User ra (theo code bạn B)
-            // Nhớ import ueh.edu.vn.md.micro4nerds.data.model.User;
             ueh.edu.vn.md.micro4nerds.data.model.User currentUser = pref.getUser();
 
             if (currentUser != null) {
-                tvName.setText(currentUser.getName()); // Hoặc getFullName() tùy model User
+                tvName.setText(currentUser.getName());
                 tvEmail.setText(currentUser.getEmail());
 
                 Glide.with(this)
                  .load(currentUser.getAvatar())
-                 .placeholder(R.drawable.ic_menu) // Dùng tạm icon nào đó
+                 .placeholder(R.drawable.ic_menu)
                  .circleCrop()
                  .into(imgAvatar);
             }
@@ -276,6 +274,26 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         else if (id == R.id.nav_acc_bag) {
             filterKeyword = "Túi";
         }
+
+        // kiểm tra sự kiện click vào profile trong menu
+        else if (id == R.id.nav_profile) {
+            // Kiểm tra đăng nhập
+            if (new SharedPrefManager(this).isLoggedIn()) {
+                startActivity(new Intent(this, ueh.edu.vn.md.micro4nerds.ui.user.ProfileActivity.class));
+            } else {
+                Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, ueh.edu.vn.md.micro4nerds.ui.auth.LoginActivity.class));
+            }
+        }
+        // kiểm tra sự kiện click vào Order History trong menu
+        else if (id == R.id.nav_orders) {
+            if (new SharedPrefManager(this).isLoggedIn()) {
+                startActivity(new Intent(this, ueh.edu.vn.md.micro4nerds.ui.user.OrderHistoryActivity.class));
+            } else {
+                Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, ueh.edu.vn.md.micro4nerds.ui.auth.LoginActivity.class));
+            }
+        }
         else if (id == R.id.nav_logout) {
             new SharedPrefManager(this).logout();
             Toast.makeText(this, "Đã đăng xuất!", Toast.LENGTH_SHORT).show();
@@ -283,14 +301,13 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             startActivity(getIntent());
         }
 
-        // GỌI VIEWMODEL ĐỂ LỌC (Tái sử dụng hàm filter ở bước Search)
+        // GỌI VIEWMODEL ĐỂ LỌC (Tái sử dụng hàm filter ở trang Search)
         if (!filterKeyword.isEmpty()) {
             List<Product> filtered = productViewModel.filterProducts(filterKeyword);
             productAdapter.setProductList(filtered);
             Toast.makeText(this, "Đang lọc: " + filterKeyword, Toast.LENGTH_SHORT).show();
         } else {
             // Nếu keyword rỗng -> Load lại toàn bộ (Gọi lại hàm gốc)
-            // Cần sửa ViewModel để có hàm lấy list gốc, hoặc trigger lại observe
             productViewModel.loadProducts();
         }
 
@@ -309,7 +326,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-    // --- HÀM: XỬ LÝ NÚT HOME TRONG BOTTOM NAV ---
+    // --- HÀM: XỬ LÝ NÚT HOME KO BỊ GHI ĐÈ TRONG BOTTOM NAV ---
     private void setupBottomNavBehavior() {
         ImageView btnHome = findViewById(R.id.btnHome);
         if (btnHome != null) {
@@ -318,12 +335,10 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 productViewModel.loadProducts(); // Gọi hàm load gốc
 
                 // Cuộn lên đầu trang cho mượt
-                // (Vì đang dùng NestedScrollView nên ta cuộn ScrollView)
-                androidx.core.widget.NestedScrollView scrollView = findViewById(R.id.nestedScrollView); // Cần đặt ID cho ScrollView trong XML nếu chưa có
+                androidx.core.widget.NestedScrollView scrollView = findViewById(R.id.nestedScrollView);
                 if (scrollView != null) {
                     scrollView.smoothScrollTo(0, 0);
                 }
-
                 Toast.makeText(this, "Tất cả sản phẩm", Toast.LENGTH_SHORT).show();
             });
         }
