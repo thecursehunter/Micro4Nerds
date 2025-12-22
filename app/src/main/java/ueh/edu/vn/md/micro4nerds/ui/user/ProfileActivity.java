@@ -70,11 +70,11 @@ public class ProfileActivity extends BaseActivity {
             if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
                 Glide.with(this)
                         .load(user.getAvatar())
-                        .placeholder(R.drawable.ic_cart) // Ảnh chờ
-                        .error(R.drawable.ic_cart)       // Ảnh lỗi
+                        .placeholder(R.mipmap.ic_launcher) // Ảnh chờ (dùng logo thay vì ic_cart)
+                        .error(R.mipmap.ic_launcher)       // Ảnh lỗi
                         .into(binding.imgProfile);
             } else {
-                binding.imgProfile.setImageResource(R.drawable.ic_cart);
+                binding.imgProfile.setImageResource(R.mipmap.ic_launcher);
             }
         }
     }
@@ -85,7 +85,8 @@ public class ProfileActivity extends BaseActivity {
         });
 
         binding.tvMyOrders.setOnClickListener(v -> {
-            Toast.makeText(this, "My Orders clicked", Toast.LENGTH_SHORT).show();
+            // Chuyển sang màn hình Lịch sử đơn hàng
+            startActivity(new Intent(this, OrderHistoryActivity.class));
         });
 
         binding.tvSettings.setOnClickListener(v -> {

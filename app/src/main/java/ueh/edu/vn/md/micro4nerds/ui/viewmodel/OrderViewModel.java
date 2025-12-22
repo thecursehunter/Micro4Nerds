@@ -1,6 +1,8 @@
 package ueh.edu.vn.md.micro4nerds.ui.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -8,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
@@ -19,6 +22,7 @@ public class OrderViewModel extends AndroidViewModel {
 
     private final OrderRepository orderRepository;
     private final MutableLiveData<CheckoutState> checkoutState = new MutableLiveData<>();
+    private final MutableLiveData<List<Order>> orderList = new MutableLiveData<>();
     private String lastError = null;
 
     public enum CheckoutState {
@@ -36,6 +40,10 @@ public class OrderViewModel extends AndroidViewModel {
 
     public LiveData<CheckoutState> getCheckoutState() {
         return checkoutState;
+    }
+
+    public LiveData<List<Order>> getOrderList() {
+        return orderList;
     }
 
     public String getLastError() {
@@ -66,5 +74,25 @@ public class OrderViewModel extends AndroidViewModel {
 
     public void resetCheckoutState() {
         checkoutState.setValue(CheckoutState.IDLE);
+    }
+
+    public void loadOrderHistory() {
+        orderRepository.fetchOrderHistory(new OrderRemoteDataSource.GetOrdersCallback() {
+            @Override
+            public void onOrdersLoaded(List<Order> orders) {
+                orderList.postValue(orders);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                // QUAN TRỌNG: In lỗi ra Logcat để lấy link tạo Index
+                Log.e("OrderHistory", "Lỗi lấy lịch sử đơn hàng: ", e);
+
+                lastError = e.getMessage();
+
+                // Cập nhật list rỗng để UI tắt vòng xoay và hiện thông báo "Không có đơn hàng" (hoặc xử lý lỗi riêng)
+                orderList.postValue(new ArrayList<>());
+            }
+        });
     }
 }
