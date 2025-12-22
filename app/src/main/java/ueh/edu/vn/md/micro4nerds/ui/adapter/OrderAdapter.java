@@ -20,6 +20,7 @@ import java.util.Locale;
 import ueh.edu.vn.md.micro4nerds.R;
 import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
 import ueh.edu.vn.md.micro4nerds.data.model.Order;
+import ueh.edu.vn.md.micro4nerds.utils.FormatUtils;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
 
@@ -117,8 +118,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                 tvItemCount.setVisibility(View.GONE);
             }
 
-            // 4. Tổng tiền
-            tvOrderTotal.setText("$" + String.format(Locale.getDefault(), "%.2f", order.getTotalPrice()));
+            // 4. Tổng tiền - Sử dụng FormatUtils
+            tvOrderTotal.setText(FormatUtils.formatCurrency(order.getTotalPrice()));
         }
     }
 }

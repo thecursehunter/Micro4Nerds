@@ -68,7 +68,17 @@ public class BaseActivity extends AppCompatActivity {
         CardView cvAvatar = toolbar.findViewById(R.id.cvAvatar);
 
         if (btnMenu != null) {
-            btnMenu.setOnClickListener(v -> Toast.makeText(this, "Menu Clicked", Toast.LENGTH_SHORT).show());
+            // Kiểm tra: Nếu đang ở trang Home
+            if (this instanceof HomeActivity) {
+                // 1. Hiện icon MENU (3 gạch)
+                btnMenu.setImageResource(R.drawable.ic_menu);
+            }
+            else {
+                // 1. Hiện icon BACK (Mũi tên trái) khi ở các trang khác
+                btnMenu.setImageResource(R.drawable.ic_back);
+                // 2. Sự kiện Click: Đóng Activity hiện tại để quay về trang trước
+                btnMenu.setOnClickListener(v -> finish());
+            }
         }
 
         // Logic click vào avatar đã đúng: chưa đăng nhập -> Login, đã đăng nhập -> Profile
