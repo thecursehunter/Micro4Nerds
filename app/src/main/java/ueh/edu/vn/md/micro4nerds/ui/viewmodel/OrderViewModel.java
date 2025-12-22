@@ -1,6 +1,8 @@
 package ueh.edu.vn.md.micro4nerds.ui.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -8,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
@@ -19,7 +22,8 @@ public class OrderViewModel extends AndroidViewModel {
 
     private final OrderRepository orderRepository;
     private final MutableLiveData<CheckoutState> checkoutState = new MutableLiveData<>();
-    private String lastError = null; 
+    private final MutableLiveData<List<Order>> orderList = new MutableLiveData<>();
+    private String lastError = null;
 
     public enum CheckoutState {
         IDLE,
@@ -38,17 +42,19 @@ public class OrderViewModel extends AndroidViewModel {
         return checkoutState;
     }
 
+    public LiveData<List<Order>> getOrderList() {
+        return orderList;
+    }
+
     public String getLastError() {
         return lastError;
     }
 
-    // Sửa đổi phương thức checkout
     public void checkout(List<CartItem> items, double totalPrice, String customerName, String address, String shippingMethod) {
         String userId = FirebaseAuth.getInstance().getUid();
         
         checkoutState.setValue(CheckoutState.LOADING);
 
-        // Tạo đối tượng Order với đầy đủ thông tin
         Order order = new Order(userId, customerName, items, totalPrice, address, shippingMethod);
 
         orderRepository.createOrder(order, new OrderRemoteDataSource.OrderCallback() {
@@ -68,5 +74,25 @@ public class OrderViewModel extends AndroidViewModel {
 
     public void resetCheckoutState() {
         checkoutState.setValue(CheckoutState.IDLE);
+    }
+
+    public void loadOrderHistory() {
+        orderRepository.fetchOrderHistory(new OrderRemoteDataSource.GetOrdersCallback() {
+            @Override
+            public void onOrdersLoaded(List<Order> orders) {
+                orderList.postValue(orders);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                // QUAN TRỌNG: In lỗi ra Logcat để lấy link tạo Index
+                Log.e("OrderHistory", "Lỗi lấy lịch sử đơn hàng: ", e);
+                
+                lastError = e.getMessage();
+                
+                // Cập nhật list rỗng để UI tắt vòng xoay và hiện thông báo "Không có đơn hàng" (hoặc xử lý lỗi riêng)
+                orderList.postValue(new ArrayList<>());
+            }
+        });
     }
 }

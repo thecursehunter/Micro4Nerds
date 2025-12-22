@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:background="#FFFFFF"
     tools:context=".ui.auth.RegisterActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -12,31 +13,26 @@
         android:layout_height="wrap_content"
         android:paddingBottom="24dp">
 
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/layout_toolbar"
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/iv_logo_reg"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="48dp"
+            android:src="@mipmap/ic_launcher"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/iv_logo_reg"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="32dp"
-            android:src="@mipmap/ic_launcher"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
-
+        <!-- Tiêu đề -->
         <TextView
             android:id="@+id/tvRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Create Account"
+            android:layout_marginTop="24dp"
+            android:text="Tạo Tài Khoản"
             android:textColor="@android:color/black"
-            android:textSize="28sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,21 +42,27 @@
             android:id="@+id/tvRegisterSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create a new account to get started"
+            android:layout_marginTop="8dp"
+            android:text="Đăng ký để bắt đầu hành trình mua sắm"
             android:textColor="@android:color/darker_gray"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvRegister" />
 
+        <!-- Form nhập liệu -->
+        <!-- 1. Full Name -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilNameReg"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="24dp"
+            android:textColorHint="#757575"
+            app:boxStrokeColor="@color/purple_primary"
+            app:hintTextColor="@color/purple_primary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvRegisterSubtitle">
@@ -69,16 +71,21 @@
                 android:id="@+id/edtNameReg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Full Name"
+                android:hint="Họ và tên"
+                android:textColor="@android:color/black"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- 2. Email -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilEmailReg"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:textColorHint="#757575"
+            app:boxStrokeColor="@color/purple_primary"
+            app:hintTextColor="@color/purple_primary"
             app:layout_constraintEnd_toEndOf="@id/tilNameReg"
             app:layout_constraintStart_toStartOf="@id/tilNameReg"
             app:layout_constraintTop_toBottomOf="@id/tilNameReg">
@@ -88,15 +95,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
+                android:textColor="@android:color/black"
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- 3. Password -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilPasswordReg"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:textColorHint="#757575"
+            app:boxStrokeColor="@color/purple_primary"
+            app:hintTextColor="@color/purple_primary"
             app:layout_constraintEnd_toEndOf="@id/tilEmailReg"
             app:layout_constraintStart_toStartOf="@id/tilEmailReg"
             app:layout_constraintTop_toBottomOf="@id/tilEmailReg"
@@ -106,37 +118,45 @@
                 android:id="@+id/edtPasswordReg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Password"
+                android:hint="Mật khẩu"
+                android:textColor="@android:color/black"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- 4. Confirm Password -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilConfirmPasswordReg"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:textColorHint="#757575"
+            app:boxStrokeColor="@color/purple_primary"
+            app:hintTextColor="@color/purple_primary"
             app:layout_constraintEnd_toEndOf="@+id/tilPasswordReg"
             app:layout_constraintStart_toStartOf="@+id/tilPasswordReg"
-            app:layout_constraintTop_toBottomOf="@id/tilPasswordReg"
+            app:layout_constraintTop_toBottomOf="@+id/tilPasswordReg"
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtConfirmPasswordReg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Confirm Password"
+                android:hint="Xác nhận mật khẩu"
+                android:textColor="@android:color/black"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRegister"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:paddingVertical="12dp"
-            android:text="Register"
-            android:textSize="16sp"
+            android:layout_height="60dp"
+            android:layout_marginTop="32dp"
+            android:text="Đăng ký"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/purple_primary"
+            app:cornerRadius="12dp"
             app:layout_constraintEnd_toEndOf="@+id/tilConfirmPasswordReg"
             app:layout_constraintStart_toStartOf="@+id/tilConfirmPasswordReg"
             app:layout_constraintTop_toBottomOf="@+id/tilConfirmPasswordReg" />
@@ -145,7 +165,7 @@
             android:id="@+id/llGoToLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
@@ -155,17 +175,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Already have an account? "
+                android:text="Đã có tài khoản? "
                 android:textColor="@android:color/darker_gray"
-                android:textSize="14sp" />
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tvBackToLogin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Login"
-                android:textColor="@android:color/holo_blue_dark"
-                android:textSize="14sp"
+                android:padding="8dp"
+                android:text="Đăng nhập ngay"
+                android:textColor="@color/purple_primary"
+                android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
