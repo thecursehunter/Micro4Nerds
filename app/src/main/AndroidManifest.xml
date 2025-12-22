@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Micro4Nerds">
 
-        <!-- Màn hình chính, điểm khởi đầu của ứng dụng -->
+        <!-- Màn hình chính -->
         <activity
             android:name=".ui.user.HomeActivity"
             android:exported="true">
@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Các màn hình xác thực -->
+        <!-- Xác thực -->
         <activity
             android:name=".ui.auth.LoginActivity"
             android:exported="false" />
@@ -33,7 +33,7 @@
             android:name=".ui.auth.RegisterActivity"
             android:exported="false" />
 
-        <!-- Các màn hình chức năng người dùng -->
+        <!-- Chức năng người dùng -->
         <activity
             android:name=".ui.user.ProfileActivity"
             android:exported="false" />
@@ -48,6 +48,11 @@
             android:exported="false" />
         <activity
             android:name=".ui.user.CheckoutActivity"
+            android:exported="false" />
+        
+        <!-- MỚI THÊM: Lịch sử đơn hàng -->
+        <activity
+            android:name=".ui.user.OrderHistoryActivity"
             android:exported="false" />
 
     </application>
