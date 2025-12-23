@@ -28,11 +28,12 @@ import ueh.edu.vn.md.micro4nerds.data.model.User;
 import ueh.edu.vn.md.micro4nerds.ui.adapter.CheckoutAdapter;
 import ueh.edu.vn.md.micro4nerds.ui.viewmodel.CartViewModel;
 import ueh.edu.vn.md.micro4nerds.ui.viewmodel.OrderViewModel;
+import ueh.edu.vn.md.micro4nerds.utils.NetworkUtils;
 
 public class CheckoutActivity extends AppCompatActivity {
 
     private Button btnSubmitOrder;
-    private TextView tvOrderAmount, tvDeliveryFee, tvTotalAmount, tvAutofill; // Thêm tvAutofill
+    private TextView tvOrderAmount, tvDeliveryFee, tvTotalAmount, tvAutofill;
     private EditText etFullName, etAddress, etPhoneNumber;
     private RadioGroup rgPaymentMethod, rgDeliveryMethod;
     private ProgressBar progressBar;
@@ -40,7 +41,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private CheckoutAdapter checkoutAdapter;
 
     private OrderViewModel orderViewModel;
-    private SharedPrefManager sharedPrefManager; // Thêm SharedPrefManager
+    private SharedPrefManager sharedPrefManager;
 
     private double deliveryFee = 25000;
     private List<CartItem> itemsToCheckout;
@@ -52,12 +53,15 @@ public class CheckoutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_checkout);
 
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
-        sharedPrefManager = new SharedPrefManager(this); // Khởi tạo
+        sharedPrefManager = new SharedPrefManager(this);
 
         initViews();
         checkIntent();
         setupListeners();
         observeViewModel();
+
+        // TỰ ĐỘNG ĐIỀN THÔNG TIN KHI VỪA MỞ MÀN HÌNH
+        autofillUserInfo(false);
     }
 
     private void checkIntent() {
@@ -90,7 +94,7 @@ public class CheckoutActivity extends AppCompatActivity {
         tvOrderAmount = findViewById(R.id.tvOrderAmount);
         tvDeliveryFee = findViewById(R.id.tvDeliveryFee);
         tvTotalAmount = findViewById(R.id.tvTotalAmount);
-        tvAutofill = findViewById(R.id.tvAutofill); // Ánh xạ nút Autofill
+        tvAutofill = findViewById(R.id.tvAutofill);
         etFullName = findViewById(R.id.etFullName);
         etAddress = findViewById(R.id.etAddress);
         etPhoneNumber = findViewById(R.id.etPhoneNumber);
@@ -109,9 +113,8 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        // Xử lý sự kiện bấm nút Autofill
         if (tvAutofill != null) {
-            tvAutofill.setOnClickListener(v -> autofillUserInfo());
+            tvAutofill.setOnClickListener(v -> autofillUserInfo(true));
         }
 
         rgDeliveryMethod.setOnCheckedChangeListener((group, checkedId) -> {
@@ -122,6 +125,11 @@ public class CheckoutActivity extends AppCompatActivity {
         });
 
         btnSubmitOrder.setOnClickListener(v -> {
+            if (!NetworkUtils.isNetworkAvailable(this)) {
+                Toast.makeText(this, "Không có kết nối Internet. Vui lòng kiểm tra lại mạng!", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             if (itemsToCheckout == null || itemsToCheckout.isEmpty()) {
                 Toast.makeText(this, "Không có sản phẩm để thanh toán!", Toast.LENGTH_SHORT).show();
                 return;
@@ -146,12 +154,11 @@ public class CheckoutActivity extends AppCompatActivity {
                 return;
             }
 
-            // Gọi checkout với đầy đủ tham số
             orderViewModel.checkout(itemsToCheckout, orderAmountToCheckout, fullName, phoneNumber, address, shippingMethod);
         });
     }
 
-    private void autofillUserInfo() {
+    private void autofillUserInfo(boolean showToast) {
         User user = sharedPrefManager.getUser();
         if (user != null) {
             boolean hasData = false;
@@ -169,12 +176,14 @@ public class CheckoutActivity extends AppCompatActivity {
                 hasData = true;
             }
 
-            if (hasData) {
-                Toast.makeText(this, "Đã điền thông tin từ hồ sơ", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Hồ sơ chưa có thông tin đầy đủ. Vui lòng cập nhật trong Profile.", Toast.LENGTH_LONG).show();
+            if (showToast) {
+                if (hasData) {
+                    Toast.makeText(this, "Đã điền thông tin từ hồ sơ", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Hồ sơ chưa có thông tin đầy đủ. Vui lòng cập nhật trong Profile.", Toast.LENGTH_LONG).show();
+                }
             }
-        } else {
+        } else if (showToast) {
             Toast.makeText(this, "Không tìm thấy thông tin người dùng", Toast.LENGTH_SHORT).show();
         }
     }
@@ -191,7 +200,6 @@ public class CheckoutActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(this, "Đặt hàng thành công!", Toast.LENGTH_LONG).show();
                     new ViewModelProvider(this).get(CartViewModel.class).clearCart();
-                    // Navigate to HomeActivity instead of going back
                     Intent intent = new Intent(this, HomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);

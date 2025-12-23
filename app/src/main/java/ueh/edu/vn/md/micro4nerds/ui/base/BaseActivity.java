@@ -1,7 +1,10 @@
 package ueh.edu.vn.md.micro4nerds.ui.base;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -48,7 +51,6 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateToolbarAvatar();
-        // updateCartCount(CartManager.getInstance().getCartCount());
     }
 
     private void setupCommonUI() {
@@ -68,20 +70,15 @@ public class BaseActivity extends AppCompatActivity {
         CardView cvAvatar = toolbar.findViewById(R.id.cvAvatar);
 
         if (btnMenu != null) {
-            // Kiểm tra: Nếu đang ở trang Home
             if (this instanceof HomeActivity) {
-                // 1. Hiện icon MENU (3 gạch)
                 btnMenu.setImageResource(R.drawable.ic_menu);
             }
             else {
-                // 1. Hiện icon BACK (Mũi tên trái) khi ở các trang khác
                 btnMenu.setImageResource(R.drawable.ic_back);
-                // 2. Sự kiện Click: Đóng Activity hiện tại để quay về trang trước
                 btnMenu.setOnClickListener(v -> finish());
             }
         }
 
-        // Logic click vào avatar đã đúng: chưa đăng nhập -> Login, đã đăng nhập -> Profile
         if (cvAvatar != null) {
             cvAvatar.setOnClickListener(v -> {
                 if (sharedPrefManager.isLoggedIn()) {
@@ -138,19 +135,31 @@ public class BaseActivity extends AppCompatActivity {
 
         if (sharedPrefManager.isLoggedIn()) {
             User user = sharedPrefManager.getUser();
-            // Đã đăng nhập, tải avatar thật
-            if (user != null && user.getAvatar() != null && !user.getAvatar().isEmpty()) {
-                Glide.with(this)
-                        .load(user.getAvatar())
-                        .placeholder(R.drawable.ic_default_avatar) // Ảnh chờ
-                        .error(R.drawable.ic_default_avatar)       // Ảnh lỗi
-                        .into(imgAvatar);
-            } else {
-                // Đăng nhập nhưng không có avatar, hiện ảnh mặc định
-                imgAvatar.setImageResource(R.drawable.ic_default_avatar);
+            if (user != null) {
+                String avatarData = user.getAvatar();
+                if (avatarData != null && !avatarData.isEmpty()) {
+                    if (avatarData.startsWith("http")) {
+                        // Trường hợp là link URL
+                        Glide.with(this)
+                                .load(avatarData)
+                                .placeholder(R.drawable.ic_default_avatar)
+                                .error(R.drawable.ic_default_avatar)
+                                .into(imgAvatar);
+                    } else {
+                        // Trường hợp là chuỗi Base64 (Mã hóa)
+                        try {
+                            byte[] decodedString = Base64.decode(avatarData, Base64.DEFAULT);
+                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                            imgAvatar.setImageBitmap(decodedByte);
+                        } catch (Exception e) {
+                            imgAvatar.setImageResource(R.drawable.ic_default_avatar);
+                        }
+                    }
+                } else {
+                    imgAvatar.setImageResource(R.drawable.ic_default_avatar);
+                }
             }
         } else {
-            // Chưa đăng nhập, hiện ảnh mặc định
             imgAvatar.setImageResource(R.drawable.ic_default_avatar);
         }
     }

@@ -1,8 +1,11 @@
 package ueh.edu.vn.md.micro4nerds.ui.user;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,9 +23,9 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +36,6 @@ import ueh.edu.vn.md.micro4nerds.databinding.ActivityProfileBinding;
 import ueh.edu.vn.md.micro4nerds.ui.auth.LoginActivity;
 import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
 import ueh.edu.vn.md.micro4nerds.ui.viewmodel.CartViewModel;
-import ueh.edu.vn.md.micro4nerds.utils.ViewUtils;
 
 public class ProfileActivity extends BaseActivity {
 
@@ -42,10 +44,9 @@ public class ProfileActivity extends BaseActivity {
     private SharedPrefManager sharedPrefManager;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
-    private FirebaseStorage storage;
 
     private ActivityResultLauncher<String> pickImageLauncher;
-    private Uri selectedImageUri;
+    private String base64Image = null;
     private ImageView dialogAvatarPreview;
 
     @Override
@@ -57,7 +58,6 @@ public class ProfileActivity extends BaseActivity {
         sharedPrefManager = new SharedPrefManager(this);
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        storage = FirebaseStorage.getInstance();
 
         if (!sharedPrefManager.isLoggedIn()) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -83,12 +83,32 @@ public class ProfileActivity extends BaseActivity {
     private void setupImagePicker() {
         pickImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             if (uri != null) {
-                selectedImageUri = uri;
-                if (dialogAvatarPreview != null) {
-                    dialogAvatarPreview.setImageURI(uri);
-                }
+                processImage(uri);
             }
         });
+    }
+
+    private void processImage(Uri uri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            
+            // Nén ảnh xuống kích thước nhỏ (ví dụ 300x300) để lưu vào database
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 300, 300, true);
+            
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream);
+            byte[] bytes = outputStream.toByteArray();
+            
+            base64Image = Base64.encodeToString(bytes, Base64.DEFAULT);
+            
+            if (dialogAvatarPreview != null) {
+                dialogAvatarPreview.setImageBitmap(resizedBitmap);
+            }
+        } catch (Exception e) {
+            Log.e("ProfileActivity", "Lỗi xử lý ảnh", e);
+            Toast.makeText(this, "Không thể xử lý ảnh này", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadUserProfile() {
@@ -97,28 +117,34 @@ public class ProfileActivity extends BaseActivity {
             binding.tvEmail.setText(user.getEmail());
             binding.tvName.setText(user.getName() != null ? user.getName() : "User");
 
-            if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
-                Glide.with(this)
-                        .load(user.getAvatar())
-                        .placeholder(R.mipmap.ic_launcher)
-                        .error(R.mipmap.ic_launcher)
-                        .into(binding.imgProfile);
+            displayAvatar(user.getAvatar(), binding.imgProfile);
+        }
+    }
+
+    private void displayAvatar(String avatarData, ImageView imageView) {
+        if (avatarData != null && !avatarData.isEmpty()) {
+            if (avatarData.startsWith("http")) {
+                // Link URL thông thường
+                Glide.with(this).load(avatarData).placeholder(R.mipmap.ic_launcher).circleCrop().into(imageView);
             } else {
-                binding.imgProfile.setImageResource(R.mipmap.ic_launcher);
+                // Dạng Base64 (lưu trong database)
+                try {
+                    byte[] decodedString = Base64.decode(avatarData, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    Glide.with(this).load(decodedByte).placeholder(R.mipmap.ic_launcher).circleCrop().into(imageView);
+                } catch (Exception e) {
+                    imageView.setImageResource(R.mipmap.ic_launcher);
+                }
             }
+        } else {
+            imageView.setImageResource(R.mipmap.ic_launcher);
         }
     }
 
     private void setupMenuListeners() {
         binding.tvEditProfile.setOnClickListener(v -> showEditProfileDialog());
-
-        binding.tvMyOrders.setOnClickListener(v -> {
-            startActivity(new Intent(this, OrderHistoryActivity.class));
-        });
-
-        binding.tvSettings.setOnClickListener(v -> {
-            Toast.makeText(this, "Chức năng đang phát triển", Toast.LENGTH_SHORT).show();
-        });
+        binding.tvMyOrders.setOnClickListener(v -> startActivity(new Intent(this, OrderHistoryActivity.class)));
+        binding.tvSettings.setOnClickListener(v -> Toast.makeText(this, "Chức năng đang phát triển", Toast.LENGTH_SHORT).show());
     }
 
     private void showEditProfileDialog() {
@@ -127,32 +153,26 @@ public class ProfileActivity extends BaseActivity {
         builder.setView(view);
 
         AlertDialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
 
-        // Ánh xạ View
         dialogAvatarPreview = view.findViewById(R.id.imgEditAvatar);
         TextInputEditText edtName = view.findViewById(R.id.edtName);
-        TextInputEditText edtPhone = view.findViewById(R.id.edtPhone);     // Mới
-        TextInputEditText edtAddress = view.findViewById(R.id.edtAddress); // Mới
+        TextInputEditText edtPhone = view.findViewById(R.id.edtPhone);     
+        TextInputEditText edtAddress = view.findViewById(R.id.edtAddress); 
         Button btnSave = view.findViewById(R.id.btnSave);
         Button btnCancel = view.findViewById(R.id.btnCancel);
         ProgressBar progressBar = view.findViewById(R.id.progressBar);
 
-        selectedImageUri = null;
+        base64Image = null; // Reset
 
         User currentUser = sharedPrefManager.getUser();
         if (currentUser != null) {
             edtName.setText(currentUser.getName());
-            // Hiển thị Phone và Address hiện tại (nếu có)
-            edtPhone.setText(currentUser.getPhone() != null ? currentUser.getPhone() : "");
-            edtAddress.setText(currentUser.getAddress() != null ? currentUser.getAddress() : "");
-            
-            if (currentUser.getAvatar() != null && !currentUser.getAvatar().isEmpty()) {
-                Glide.with(this)
-                        .load(currentUser.getAvatar())
-                        .placeholder(R.mipmap.ic_launcher)
-                        .into(dialogAvatarPreview);
-            }
+            edtPhone.setText(currentUser.getPhone());
+            edtAddress.setText(currentUser.getAddress());
+            displayAvatar(currentUser.getAvatar(), dialogAvatarPreview);
         }
 
         dialogAvatarPreview.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
@@ -170,63 +190,27 @@ public class ProfileActivity extends BaseActivity {
             progressBar.setVisibility(View.VISIBLE);
             btnSave.setEnabled(false);
 
-            if (selectedImageUri != null) {
-                uploadImageAndSaveProfile(currentUser, newName, newPhone, newAddress, selectedImageUri, dialog, progressBar, btnSave);
-            } else {
-                updateProfileInFirestore(currentUser, newName, newPhone, newAddress, currentUser.getAvatar(), dialog, progressBar, btnSave);
-            }
+            updateProfileInFirestore(currentUser, newName, newPhone, newAddress, base64Image != null ? base64Image : currentUser.getAvatar(), dialog, progressBar, btnSave);
         });
 
         btnCancel.setOnClickListener(v -> dialog.dismiss());
-
         dialog.show();
     }
 
-    private void uploadImageAndSaveProfile(User currentUser, String newName, String newPhone, String newAddress, Uri imageUri, AlertDialog dialog, ProgressBar progressBar, Button btnSave) {
-        String uid = currentUser.getUid();
-        String fileName = "profile_images/" + uid + "_" + System.currentTimeMillis() + ".jpg";
-        
-        StorageReference storageRef = storage.getReference().child(fileName);
-
-        storageRef.putFile(imageUri)
-                .continueWithTask(task -> {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-                    return storageRef.getDownloadUrl();
-                })
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        String downloadUrl = task.getResult().toString();
-                        updateProfileInFirestore(currentUser, newName, newPhone, newAddress, downloadUrl, dialog, progressBar, btnSave);
-                    } else {
-                        Log.e("Upload", "Upload failed", task.getException());
-                        progressBar.setVisibility(View.GONE);
-                        btnSave.setEnabled(true);
-                        Toast.makeText(this, "Lỗi upload: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void updateProfileInFirestore(User currentUser, String newName, String newPhone, String newAddress, String avatarUrl, AlertDialog dialog, ProgressBar progressBar, Button btnSave) {
+    private void updateProfileInFirestore(User currentUser, String newName, String newPhone, String newAddress, String avatarData, AlertDialog dialog, ProgressBar progressBar, Button btnSave) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("name", newName);
         updates.put("phone", newPhone);
         updates.put("address", newAddress);
-        if (avatarUrl != null) {
-            updates.put("avatar", avatarUrl);
-        }
+        updates.put("avatar", avatarData);
 
         db.collection("users").document(currentUser.getUid())
                 .update(updates)
                 .addOnSuccessListener(aVoid -> {
-                    // Cập nhật Local
                     currentUser.setName(newName);
                     currentUser.setPhone(newPhone);
                     currentUser.setAddress(newAddress);
-                    if (avatarUrl != null) {
-                        currentUser.setAvatar(avatarUrl);
-                    }
+                    currentUser.setAvatar(avatarData);
                     sharedPrefManager.saveUser(currentUser);
 
                     loadUserProfile();
@@ -237,14 +221,18 @@ public class ProfileActivity extends BaseActivity {
                 .addOnFailureListener(e -> {
                     progressBar.setVisibility(View.GONE);
                     btnSave.setEnabled(true);
-                    Toast.makeText(this, "Lỗi cập nhật Firestore: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Lỗi cập nhật: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
     private void observeViewModel() {
         cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
         cartViewModel.getCartItems().observe(this, cartItems -> {
-            ViewUtils.updateCartBadge(binding.bottomNav.cvBadge, binding.bottomNav.tvCartCount, cartItems);
+            int total = 0;
+            if (cartItems != null) {
+                for (ueh.edu.vn.md.micro4nerds.data.model.CartItem item : cartItems) total += item.getQuantity();
+            }
+            updateCartCount(total);
         });
     }
 }
