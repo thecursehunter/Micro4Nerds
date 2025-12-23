@@ -29,6 +29,9 @@ public class OrderHistoryActivity extends BaseActivity {
 
         // Khởi tạo ViewModel
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
+        
+        // Xử lý nút Back
+        binding.btnBack.setOnClickListener(v -> finish());
 
         // Thiết lập RecyclerView
         setupRecyclerView();

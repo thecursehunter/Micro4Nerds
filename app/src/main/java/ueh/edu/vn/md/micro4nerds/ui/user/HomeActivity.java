@@ -1,9 +1,12 @@
 package ueh.edu.vn.md.micro4nerds.ui.user;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Base64;
 import android.widget.TextView;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,11 +40,9 @@ import ueh.edu.vn.md.micro4nerds.ui.viewmodel.ProductViewModel;
 
 
 public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
-    // Khai báo biến
     private ViewPager2 viewPagerBanner;
     private RecyclerView rvProducts;
 
-    // Drawer & Navigation
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ImageView btnMenu;
@@ -51,7 +52,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private ProductViewModel productViewModel;
     private CartViewModel cartViewModel;
 
-    // Handler để chạy auto slide cho banner
     private Handler sliderHandler = new Handler(Looper.getMainLooper());
 
     @Override
@@ -59,21 +59,12 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Ánh xạ View
         initViews();
-
-        // Cấu hình Banner (Slide ảnh)
         setupBanner();
-
-        // Cấu hình Danh sách sản phẩm (Lưới 4x4)
         setupProductList();
-
-        // --- LOGIC MỚI CHO MENU ---
-        setupDrawer();      // Cấu hình đóng mở Drawer
-        setupDrawerHeader();// Hiển thị Avatar/Tên lên Header
+        setupDrawer();
+        setupDrawerHeader();
         setupBottomNavBehavior();
-
-        // Quan sát dữ liệu từ ViewModel (Để lấy list từ Firebase)
         observeData();
     }
 
@@ -83,34 +74,27 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         // Ánh xạ Drawer
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
-        // Ánh xạ nút Menu (Nó nằm trong include toolbar nên findViewById được luôn)
         btnMenu = findViewById(R.id.btnMenu);
     }
 
-    // --- PHẦN 1: LOGIC BANNER ---
     private void setupBanner() {
-        // 1. Tạo list ảnh tĩnh (từ Drawable)
         List<Integer> listBanners = new ArrayList<>();
         listBanners.add(R.drawable.banner_1);
         listBanners.add(R.drawable.banner_2);
         listBanners.add(R.drawable.banner_3);
 
-        // 2. Gán Adapter
         bannerAdapter = new BannerAdapter(listBanners);
         viewPagerBanner.setAdapter(bannerAdapter);
 
-        // 3. (Optional) Hiệu ứng chuyển cảnh đẹp mắt
         viewPagerBanner.setClipToPadding(false);
         viewPagerBanner.setClipChildren(false);
         viewPagerBanner.setOffscreenPageLimit(3);
         viewPagerBanner.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
 
-        // 4. Đăng ký sự kiện thay đổi trang để chạy Auto Slide
         viewPagerBanner.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                // Hủy lệnh cũ, đặt lệnh mới sau 3 giây
                 sliderHandler.removeCallbacks(sliderRunnable);
                 sliderHandler.postDelayed(sliderRunnable, 3000);
             }
@@ -123,29 +107,14 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             if (viewPagerBanner.getAdapter() != null) {
                 int currentItem = viewPagerBanner.getCurrentItem();
                 int totalItem = viewPagerBanner.getAdapter().getItemCount();
-
-                if (currentItem < totalItem - 1) {
-                    viewPagerBanner.setCurrentItem(currentItem + 1);
-                } else {
-                    viewPagerBanner.setCurrentItem(0);
-                }
+                viewPagerBanner.setCurrentItem(currentItem < totalItem - 1 ? currentItem + 1 : 0);
             }
         }
     };
 
-    // --- PHẦN 2: LOGIC SẢN PHẨM ---
     private void setupProductList() {
-        // 1. Kiểm tra chiều xoay màn hình
-        int spanCount = 2; // Đt dọc là 2 cột
-
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) {
-            spanCount = 3; // Nếu Đt ngang thì thành 3 cột
-        }
-
-        // 2. Thiết lập Layout Manager với số cột động
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
-        rvProducts.setLayoutManager(gridLayoutManager);
+        int spanCount = getResources().getConfiguration().orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE ? 3 : 2;
+        rvProducts.setLayoutManager(new GridLayoutManager(this, spanCount));
 
         productAdapter = new ProductAdapter(this, new ProductAdapter.ProductClickListener() {
             @Override
@@ -163,7 +132,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 startActivity(intent);
             }
         });
-
         rvProducts.setAdapter(productAdapter);
     }
 
@@ -192,7 +160,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         return total;
     }
 
-    // --- PHẦN 3: LIFECYCLE (Quản lý pin) ---
     @Override
     protected void onPause() {
         super.onPause();
@@ -206,14 +173,12 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         if (cartViewModel != null && cartViewModel.getCartItems().getValue() != null) {
             updateCartCount(calculateTotalItems(cartViewModel.getCartItems().getValue()));
         }
+        setupDrawerHeader(); // Cập nhật lại header mỗi khi quay lại trang chủ
     }
 
-    // --- PHẦN 4 (MỚI): CẤU HÌNH MENU TRƯỢT ---
     private void setupDrawer() {
         if (btnMenu != null) {
-            btnMenu.setOnClickListener(v -> {
-                drawerLayout.openDrawer(GravityCompat.START);
-            });
+            btnMenu.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
         }
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -228,30 +193,43 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
         if (pref.isLoggedIn()) {
             ueh.edu.vn.md.micro4nerds.data.model.User currentUser = pref.getUser();
-
             if (currentUser != null) {
                 tvName.setText(currentUser.getName());
                 tvEmail.setText(currentUser.getEmail());
 
-                Glide.with(this)
-                 .load(currentUser.getAvatar())
-                 .placeholder(R.drawable.ic_menu)
-                 .circleCrop()
-                 .into(imgAvatar);
+                // LOGIC GIẢI MÃ AVATAR (BASE64 HOẶC URL)
+                String avatarData = currentUser.getAvatar();
+                if (avatarData != null && !avatarData.isEmpty()) {
+                    if (avatarData.startsWith("http")) {
+                        Glide.with(this).load(avatarData).circleCrop().into(imgAvatar);
+                    } else {
+                        try {
+                            byte[] decodedString = Base64.decode(avatarData, Base64.DEFAULT);
+                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                            Glide.with(this).load(decodedByte).circleCrop().into(imgAvatar);
+                        } catch (Exception e) {
+                            imgAvatar.setImageResource(R.drawable.ic_default_avatar);
+                        }
+                    }
+                } else {
+                    imgAvatar.setImageResource(R.drawable.ic_default_avatar);
+                }
             }
         } else {
             tvName.setText("Khách");
             tvEmail.setText("Vui lòng đăng nhập");
+            imgAvatar.setImageResource(R.drawable.ic_default_avatar);
         }
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
         String filterKeyword = "";
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            filterKeyword = ""; 
+            filterKeyword = "";
         }
         else if (id == R.id.nav_camera_panasonic) {
             filterKeyword = "Panasonic";
@@ -280,24 +258,17 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             }
         }
         else if (id == R.id.nav_orders) {
-            if (new SharedPrefManager(this).isLoggedIn()) {
-                startActivity(new Intent(this, ueh.edu.vn.md.micro4nerds.ui.user.OrderHistoryActivity.class));
-            } else {
-                Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, ueh.edu.vn.md.micro4nerds.ui.auth.LoginActivity.class));
-            }
+            if (new SharedPrefManager(this).isLoggedIn()) startActivity(new Intent(this, OrderHistoryActivity.class));
+            else startActivity(new Intent(this, ueh.edu.vn.md.micro4nerds.ui.auth.LoginActivity.class));
         }
         else if (id == R.id.nav_logout) {
             new SharedPrefManager(this).logout();
-            Toast.makeText(this, "Đã đăng xuất!", Toast.LENGTH_SHORT).show();
             finish();
             startActivity(getIntent());
         }
 
         if (!filterKeyword.isEmpty()) {
-            List<Product> filtered = productViewModel.filterProducts(filterKeyword);
-            productAdapter.setProductList(filtered);
-            Toast.makeText(this, "Đang lọc: " + filterKeyword, Toast.LENGTH_SHORT).show();
+            productAdapter.setProductList(productViewModel.filterProducts(filterKeyword));
         } else {
             productViewModel.loadProducts();
         }
@@ -308,18 +279,15 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) drawerLayout.closeDrawer(GravityCompat.START);
+        else super.onBackPressed();
     }
 
     private void setupBottomNavBehavior() {
         ImageView btnHome = findViewById(R.id.btnHome);
         if (btnHome != null) {
             btnHome.setOnClickListener(v -> {
-                productViewModel.loadProducts(); 
+                productViewModel.loadProducts();
                 androidx.core.widget.NestedScrollView scrollView = findViewById(R.id.nestedScrollView);
                 if (scrollView != null) {
                     scrollView.smoothScrollTo(0, 0);
