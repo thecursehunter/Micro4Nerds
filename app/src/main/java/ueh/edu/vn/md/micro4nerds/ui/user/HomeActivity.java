@@ -226,7 +226,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         String filterKeyword = "";
-        int id = item.getItemId();
 
         if (id == R.id.nav_home) {
             filterKeyword = "";
