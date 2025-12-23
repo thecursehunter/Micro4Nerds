@@ -15,10 +15,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Micro4Nerds">
 
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
         <!-- Màn hình chính -->
         <activity
             android:name=".ui.user.HomeActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
