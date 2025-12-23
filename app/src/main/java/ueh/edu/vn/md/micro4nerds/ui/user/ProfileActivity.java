@@ -9,14 +9,16 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.List;
+
 import ueh.edu.vn.md.micro4nerds.R;
 import ueh.edu.vn.md.micro4nerds.data.local.SharedPrefManager;
+import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
 import ueh.edu.vn.md.micro4nerds.data.model.User;
 import ueh.edu.vn.md.micro4nerds.databinding.ActivityProfileBinding;
 import ueh.edu.vn.md.micro4nerds.ui.auth.LoginActivity;
 import ueh.edu.vn.md.micro4nerds.ui.base.BaseActivity;
 import ueh.edu.vn.md.micro4nerds.ui.viewmodel.CartViewModel;
-import ueh.edu.vn.md.micro4nerds.utils.ViewUtils;
 
 public class ProfileActivity extends BaseActivity {
 
@@ -66,12 +68,12 @@ public class ProfileActivity extends BaseActivity {
             binding.tvEmail.setText(user.getEmail());
             binding.tvName.setText(user.getName() != null ? user.getName() : "User");
 
-            // Tải avatar bằng Glide (đã có URL chất lượng cao từ lúc đăng nhập)
+            // Tải avatar bằng Glide
             if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
                 Glide.with(this)
                         .load(user.getAvatar())
-                        .placeholder(R.mipmap.ic_launcher) // Ảnh chờ (dùng logo thay vì ic_cart)
-                        .error(R.mipmap.ic_launcher)       // Ảnh lỗi
+                        .placeholder(R.mipmap.ic_launcher) 
+                        .error(R.mipmap.ic_launcher)       
                         .into(binding.imgProfile);
             } else {
                 binding.imgProfile.setImageResource(R.mipmap.ic_launcher);
@@ -97,7 +99,18 @@ public class ProfileActivity extends BaseActivity {
     private void observeViewModel() {
         cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
         cartViewModel.getCartItems().observe(this, cartItems -> {
-            ViewUtils.updateCartBadge(binding.bottomNav.cvBadge, binding.bottomNav.tvCartCount, cartItems);
+            // Sử dụng hàm updateCartCount từ BaseActivity
+            updateCartCount(calculateTotalItems(cartItems));
         });
+    }
+
+    private int calculateTotalItems(List<CartItem> cartItems) {
+        int total = 0;
+        if (cartItems != null) {
+            for (CartItem item : cartItems) {
+                total += item.getQuantity();
+            }
+        }
+        return total;
     }
 }

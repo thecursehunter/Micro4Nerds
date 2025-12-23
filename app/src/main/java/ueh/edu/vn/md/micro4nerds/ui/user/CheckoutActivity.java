@@ -26,6 +26,7 @@ import ueh.edu.vn.md.micro4nerds.data.model.Product;
 import ueh.edu.vn.md.micro4nerds.ui.adapter.CheckoutAdapter;
 import ueh.edu.vn.md.micro4nerds.ui.viewmodel.CartViewModel;
 import ueh.edu.vn.md.micro4nerds.ui.viewmodel.OrderViewModel;
+import ueh.edu.vn.md.micro4nerds.utils.NetworkUtils;
 
 public class CheckoutActivity extends AppCompatActivity {
 
@@ -112,6 +113,12 @@ public class CheckoutActivity extends AppCompatActivity {
         });
 
         btnSubmitOrder.setOnClickListener(v -> {
+            // Kiểm tra kết nối Internet trước khi đặt hàng
+            if (!NetworkUtils.isNetworkAvailable(this)) {
+                Toast.makeText(this, "Không có kết nối Internet. Vui lòng kiểm tra lại mạng!", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             if (itemsToCheckout == null || itemsToCheckout.isEmpty()) {
                 Toast.makeText(this, "Không có sản phẩm để thanh toán!", Toast.LENGTH_SHORT).show();
                 return;
