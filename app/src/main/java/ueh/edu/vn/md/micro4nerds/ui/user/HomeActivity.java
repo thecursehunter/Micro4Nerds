@@ -139,7 +139,16 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
     // --- PHẦN 2: LOGIC SẢN PHẨM ---
     private void setupProductList() {
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        // 1. Kiểm tra chiều xoay màn hình
+        int spanCount = 2; // Đt dọc là 2 cột
+
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) {
+            spanCount = 3; // Nếu Đt ngang thì thành 3 cột
+        }
+
+        // 2. Thiết lập Layout Manager với số cột động
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
         rvProducts.setLayoutManager(gridLayoutManager);
 
         productAdapter = new ProductAdapter(this, new ProductAdapter.ProductClickListener() {

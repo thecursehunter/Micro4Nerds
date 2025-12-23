@@ -2,22 +2,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="180dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/black"
     android:gravity="bottom"
     android:orientation="vertical"
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <!-- Avatar -->
-    <ImageView
-        android:id="@+id/imgNavAvatar"
+    <!-- Avatar bo tròn -->
+    <androidx.cardview.widget.CardView
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@android:drawable/sym_def_app_icon"
-        android:scaleType="centerCrop"
-        android:background="@android:color/white"
-        android:padding="2dp"/>
-    <!-- Sau này mình sẽ bo tròn nó bằng CardView trong code sau -->
+        app:cardCornerRadius="35dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@android:color/white">
+
+        <!-- Ảnh bên trong -->
+        <ImageView
+            android:id="@+id/imgNavAvatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@android:drawable/sym_def_app_icon"
+            android:scaleType="centerCrop"
+            android:padding="2dp"/>
+    </androidx.cardview.widget.CardView>
 
     <!-- Tên User -->
     <TextView

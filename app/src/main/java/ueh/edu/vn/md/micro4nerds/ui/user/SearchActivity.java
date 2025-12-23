@@ -52,10 +52,18 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void setupRecyclerView() {
-        // Tái sử dụng ProductAdapter của trang Home
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        // 1. Kiểm tra chiều xoay màn hình
+        int spanCount = 2; // Đt dọc là 2 cột
+
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) {
+            spanCount = 3; // Nếu Đt ngang thì thành 3 cột
+        }
+        // 2. Thiết lập Layout Manager với số cột động
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
         rvSearchResults.setLayoutManager(gridLayoutManager);
 
+        // Tái sử dụng ProductAdapter của trang Home
         productAdapter = new ProductAdapter(this, new ProductAdapter.ProductClickListener() {
             @Override
             public void onProductClick(Product product) {
