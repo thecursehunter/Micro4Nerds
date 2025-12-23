@@ -22,7 +22,6 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
@@ -39,8 +38,8 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/btnDelete"
             app:layout_constraintStart_toEndOf="@+id/imgProduct"
-            app:layout_constraintTop_toTopOf="@+id/imgProduct"
-            tools:text="Minimal Stand" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Minimal Stand with a very long name that might wrap to multiple lines" />
 
         <!-- Delete Button -->
         <ImageView
@@ -50,7 +49,7 @@
             android:src="@drawable/ic_remove"
             android:contentDescription="Remove item"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tvProductName" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Product Price -->
         <TextView
@@ -65,14 +64,17 @@
             app:layout_constraintTop_toBottomOf="@+id/tvProductName"
             tools:text="$ 25.00" />
 
-        <!-- Quantity Selector -->
+        <!-- Quantity Selector (Moved below price and anchored to bottom) -->
         <LinearLayout
+            android:id="@+id/layoutQuantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="@+id/imgProduct"
-            app:layout_constraintStart_toStartOf="@+id/tvProductName">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tvProductName"
+            app:layout_constraintTop_toBottomOf="@+id/tvProductPrice">
 
             <ImageView
                 android:id="@+id/btnIncrease"

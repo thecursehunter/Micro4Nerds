@@ -107,4 +107,8 @@ public class FirebaseAuthDataSource {
                 })
                 .addOnFailureListener(e -> callback.onError("Đăng nhập Google thất bại: " + e.getMessage()));
     }
+
+    public void logout() {
+        auth.signOut();
+    }
 }
