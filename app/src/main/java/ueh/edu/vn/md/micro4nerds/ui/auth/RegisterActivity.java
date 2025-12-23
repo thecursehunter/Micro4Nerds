@@ -58,10 +58,14 @@ public class RegisterActivity extends BaseActivity {
         authDataSource.register(email, password, name, new FirebaseAuthDataSource.AuthCallback() {
             @Override
             public void onSuccess(User user) {
-                sharedPrefManager.saveUser(user);
+                // Đăng ký thành công -> Đăng xuất ngay lập tức để người dùng phải đăng nhập lại
+                authDataSource.logout();
+                
                 showLoading(false);
-                Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                navigateToHome();
+                Toast.makeText(RegisterActivity.this, "Đăng ký thành công! Vui lòng đăng nhập.", Toast.LENGTH_LONG).show();
+                
+                // Chuyển về màn hình đăng nhập
+                navigateToLogin();
             }
 
             @Override
@@ -80,8 +84,8 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
-    private void navigateToHome() {
-        Intent intent = new Intent(this, HomeActivity.class);
+    private void navigateToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

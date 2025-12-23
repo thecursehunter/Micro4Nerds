@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.Locale;
 
 import ueh.edu.vn.md.micro4nerds.R;
+import ueh.edu.vn.md.micro4nerds.data.local.SharedPrefManager;
 import ueh.edu.vn.md.micro4nerds.data.model.CartItem;
 import ueh.edu.vn.md.micro4nerds.data.model.Product;
+import ueh.edu.vn.md.micro4nerds.data.model.User;
 import ueh.edu.vn.md.micro4nerds.ui.adapter.CheckoutAdapter;
 import ueh.edu.vn.md.micro4nerds.ui.viewmodel.CartViewModel;
 import ueh.edu.vn.md.micro4nerds.ui.viewmodel.OrderViewModel;
@@ -30,7 +32,7 @@ import ueh.edu.vn.md.micro4nerds.ui.viewmodel.OrderViewModel;
 public class CheckoutActivity extends AppCompatActivity {
 
     private Button btnSubmitOrder;
-    private TextView tvOrderAmount, tvDeliveryFee, tvTotalAmount;
+    private TextView tvOrderAmount, tvDeliveryFee, tvTotalAmount, tvAutofill; // Thêm tvAutofill
     private EditText etFullName, etAddress, etPhoneNumber;
     private RadioGroup rgPaymentMethod, rgDeliveryMethod;
     private ProgressBar progressBar;
@@ -38,6 +40,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private CheckoutAdapter checkoutAdapter;
 
     private OrderViewModel orderViewModel;
+    private SharedPrefManager sharedPrefManager; // Thêm SharedPrefManager
 
     private double deliveryFee = 25000;
     private List<CartItem> itemsToCheckout;
@@ -49,6 +52,7 @@ public class CheckoutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_checkout);
 
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
+        sharedPrefManager = new SharedPrefManager(this); // Khởi tạo
 
         initViews();
         checkIntent();
@@ -86,9 +90,10 @@ public class CheckoutActivity extends AppCompatActivity {
         tvOrderAmount = findViewById(R.id.tvOrderAmount);
         tvDeliveryFee = findViewById(R.id.tvDeliveryFee);
         tvTotalAmount = findViewById(R.id.tvTotalAmount);
+        tvAutofill = findViewById(R.id.tvAutofill); // Ánh xạ nút Autofill
         etFullName = findViewById(R.id.etFullName);
         etAddress = findViewById(R.id.etAddress);
-        etPhoneNumber = findViewById(R.id.etPhoneNumber); // Ánh xạ số điện thoại
+        etPhoneNumber = findViewById(R.id.etPhoneNumber);
         rgPaymentMethod = findViewById(R.id.rgPaymentMethod);
         rgDeliveryMethod = findViewById(R.id.rgDeliveryMethod);
         progressBar = findViewById(R.id.progressBarCheckout);
@@ -104,6 +109,11 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
+        // Xử lý sự kiện bấm nút Autofill
+        if (tvAutofill != null) {
+            tvAutofill.setOnClickListener(v -> autofillUserInfo());
+        }
+
         rgDeliveryMethod.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.rbExpress) deliveryFee = 100000;
             else if (checkedId == R.id.rbFast) deliveryFee = 50000;
@@ -119,7 +129,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
             String fullName = etFullName.getText().toString().trim();
             String address = etAddress.getText().toString().trim();
-            String phoneNumber = etPhoneNumber.getText().toString().trim(); // Lấy số điện thoại
+            String phoneNumber = etPhoneNumber.getText().toString().trim(); 
 
             if (fullName.isEmpty() || address.isEmpty() || phoneNumber.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ họ tên, địa chỉ và số điện thoại", Toast.LENGTH_SHORT).show();
@@ -139,6 +149,34 @@ public class CheckoutActivity extends AppCompatActivity {
             // Gọi checkout với đầy đủ tham số
             orderViewModel.checkout(itemsToCheckout, orderAmountToCheckout, fullName, phoneNumber, address, shippingMethod);
         });
+    }
+
+    private void autofillUserInfo() {
+        User user = sharedPrefManager.getUser();
+        if (user != null) {
+            boolean hasData = false;
+            
+            if (user.getName() != null && !user.getName().isEmpty()) {
+                etFullName.setText(user.getName());
+                hasData = true;
+            }
+            if (user.getPhone() != null && !user.getPhone().isEmpty()) {
+                etPhoneNumber.setText(user.getPhone());
+                hasData = true;
+            }
+            if (user.getAddress() != null && !user.getAddress().isEmpty()) {
+                etAddress.setText(user.getAddress());
+                hasData = true;
+            }
+
+            if (hasData) {
+                Toast.makeText(this, "Đã điền thông tin từ hồ sơ", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Hồ sơ chưa có thông tin đầy đủ. Vui lòng cập nhật trong Profile.", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(this, "Không tìm thấy thông tin người dùng", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void observeViewModel() {
