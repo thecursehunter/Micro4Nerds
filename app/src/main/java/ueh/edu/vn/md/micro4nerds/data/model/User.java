@@ -6,6 +6,8 @@ public class User {
     private String name;
     private String role; // "admin" hoặc "user"
     private String avatar; // URL ảnh đại diện
+    private String phone;   // Số điện thoại
+    private String address; // Địa chỉ
 
     // Constructor rỗng bắt buộc cho Firebase
     public User() { }
@@ -15,7 +17,9 @@ public class User {
         this.email = email;
         this.name = name;
         this.role = role;
-        this.avatar = null; // Mặc định là null khi mới tạo
+        this.avatar = null;
+        this.phone = "";
+        this.address = "";
     }
 
     // --- Getter & Setter ---
@@ -33,4 +37,10 @@ public class User {
 
     public String getAvatar() { return avatar; }
     public void setAvatar(String avatar) { this.avatar = avatar; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
 }
