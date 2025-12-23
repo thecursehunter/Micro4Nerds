@@ -15,6 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Micro4Nerds">
 
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
         <!-- Màn hình chính -->
         <activity
             android:name=".ui.user.HomeActivity"
