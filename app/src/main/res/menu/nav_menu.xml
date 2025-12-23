@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. Mặc định -->
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="Trang chủ" />
+
+    <!-- 2. Nhóm MÁY ẢNH (Có tiêu đề) -->
+    <item android:title="MÁY ẢNH">
+        <menu>
+            <!-- Các hãng máy ảnh (Dùng id để bắt sự kiện lọc) -->
+            <item
+                android:id="@+id/nav_camera_panasonic"
+                android:title="Panasonic" />
+            <item
+                android:id="@+id/nav_camera_olympus"
+                android:title="Olympus" />
+            <item
+                android:id="@+id/nav_camera_om"
+                android:title="OM" />
+            <item
+                android:id="@+id/nav_camera_blackmagic"
+                android:title="Blackmagic" />
+        </menu>
+    </item>
+
+    <!-- 3. Nhóm PHỤ KIỆN -->
+    <item android:title="PHỤ KIỆN">
+        <menu>
+            <item
+                android:id="@+id/nav_acc_lens"
+                android:title="Lens (Ống kính)" />
+            <item
+                android:id="@+id/nav_acc_bag"
+                android:title="Túi đựng" />
+        </menu>
+    </item>
+
+    <!-- 4. Nhóm TÀI KHOẢN -->
+    <item android:title="Tài khoản">
+        <menu>
+            <item
+                android:id="@+id/nav_profile"
+                android:icon="@drawable/ic_profile"
+                android:title="Hồ sơ cá nhân" />
+            <item
+                android:id="@+id/nav_orders"
+                android:icon="@drawable/ic_order_history"
+                android:title="Lịch sử đơn hàng" />
+            <item
+                android:id="@+id/nav_logout"
+                android:title="Đăng xuất"
+                android:icon="@android:drawable/ic_lock_power_off" />
+        </menu>
+    </item>
+
+</menu>

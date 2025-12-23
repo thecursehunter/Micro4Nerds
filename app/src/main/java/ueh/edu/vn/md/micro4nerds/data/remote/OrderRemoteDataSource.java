@@ -38,7 +38,7 @@ public class OrderRemoteDataSource {
             return;
         }
 
-        // Sử dụng ID của người dùng đã đăng nhập
+        // Sử dụng ID của người dùng thực tế
         order.setUserId(currentUser.getUid());
 
         // Thêm đơn hàng vào collection "orders" trong Firestore

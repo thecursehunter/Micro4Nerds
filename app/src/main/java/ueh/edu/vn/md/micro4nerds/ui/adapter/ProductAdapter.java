@@ -74,22 +74,40 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 .centerCrop()
                 .into(holder.imgProduct);
 
-        // 3. Xử lý sự kiện CLICK (Logic tách biệt theo yêu cầu của cậu)
+        // 3. Xử lý sự kiện CLICK (check stock))
 
         // A. Click vào chữ "MUA NGAY"
-        holder.tvBuyNow.setOnClickListener(v -> {
-            if (!sharedPrefManager.isLoggedIn()) {
-                Toast.makeText(context, "Vui lòng đăng nhập để mua hàng", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(context, LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
-                return;
-            }
-            
-            if (listener != null) {
-                listener.onBuyNowClick(product);
-            }
-        });
+        if (product.getStock() <= 0) {
+            // --- TRƯỜNG HỢP HẾT HÀNG ---
+            holder.tvBuyNow.setText("HẾT HÀNG");
+            holder.tvBuyNow.setTextColor(context.getResources().getColor(android.R.color.holo_red_dark));
+            holder.tvBuyNow.setOnClickListener(null);
+            // làm mờ
+            holder.tvBuyNow.setAlpha(0.5f);
+        }
+        else {
+            // --- TRƯỜNG HỢP CÒN HÀNG ---
+            holder.tvBuyNow.setText("MUA NGAY");
+
+            // Trả về màu đen mặc định
+            holder.tvBuyNow.setTextColor(context.getResources().getColor(android.R.color.black));
+            holder.tvBuyNow.setAlpha(1.0f);
+
+            // check đăng nhập
+            holder.tvBuyNow.setOnClickListener(v -> {
+                if (!sharedPrefManager.isLoggedIn()) {
+                    Toast.makeText(context, "Vui lòng đăng nhập để mua hàng", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                    return;
+                }
+
+                if (listener != null) {
+                    listener.onBuyNowClick(product);
+                }
+            });
+        }
 
         // B. Click vào toàn bộ ô sản phẩm (trừ nút Mua Ngay ra)
         holder.itemView.setOnClickListener(v -> {

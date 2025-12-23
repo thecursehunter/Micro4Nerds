@@ -50,17 +50,17 @@ public class OrderViewModel extends AndroidViewModel {
         return lastError;
     }
 
-    public void checkout(List<CartItem> items, double totalPrice, String customerName, String address, String shippingMethod) {
+    public void checkout(List<CartItem> items, double totalPrice, String customerName, String phoneNumber, String address, String shippingMethod) {
         String userId = FirebaseAuth.getInstance().getUid();
         
         checkoutState.setValue(CheckoutState.LOADING);
 
-        Order order = new Order(userId, customerName, items, totalPrice, address, shippingMethod);
+        Order order = new Order(userId, customerName, phoneNumber, items, totalPrice, address, shippingMethod);
 
         orderRepository.createOrder(order, new OrderRemoteDataSource.OrderCallback() {
             @Override
             public void onSuccess() {
-                lastError = null; 
+                lastError = null;
                 checkoutState.postValue(CheckoutState.SUCCESS);
             }
 
@@ -87,9 +87,9 @@ public class OrderViewModel extends AndroidViewModel {
             public void onError(Exception e) {
                 // QUAN TRỌNG: In lỗi ra Logcat để lấy link tạo Index
                 Log.e("OrderHistory", "Lỗi lấy lịch sử đơn hàng: ", e);
-                
+
                 lastError = e.getMessage();
-                
+
                 // Cập nhật list rỗng để UI tắt vòng xoay và hiện thông báo "Không có đơn hàng" (hoặc xử lý lỗi riêng)
                 orderList.postValue(new ArrayList<>());
             }
